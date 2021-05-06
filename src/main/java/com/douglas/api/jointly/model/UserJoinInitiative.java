@@ -1,13 +1,18 @@
 package com.douglas.api.jointly.model;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class UserJoinInitiative {
+public class UserJoinInitiative implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4237903622543173184L;
 	@Id
 	private GregorianCalendar date;
 	@Id
@@ -92,6 +97,5 @@ public class UserJoinInitiative {
 		} else if (!idUser.equals(other.idUser))
 			return false;
 		return true;
-	}
-    
+	}    
 }

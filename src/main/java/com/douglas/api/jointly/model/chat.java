@@ -1,13 +1,18 @@
 package com.douglas.api.jointly.model;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class chat {
+public class chat implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1012319594635181992L;
 	@Id
 	private GregorianCalendar date;
 	@Id
