@@ -17,34 +17,34 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	@Autowired
 	private JdbcTemplate template;
 	
-	private String qryGetListFollowed = "SELECT * FROM user WHERE email in (SELECT userFollow FROM user_follow_user WHERE user=%s)";
-	private String qryGetListFollowers = "SELECT * FROM user WHERE email in (SELECT user FROM user_follow_user WHERE userFollow=%s)";
-	private String qryGetCountFollowed = "SELECT COUNT(*) FROM user_follow_user WHERE user=%s";
-	private String qryGetCountFollowers = "SELECT COUNT(*) FROM user_follow_user WHERE userFollow=%s";
+	private String qryGetListFollowed = "SELECT * FROM user WHERE email in (SELECT userFollow FROM user_follow_user WHERE user=?)";
+	private String qryGetListFollowers = "SELECT * FROM user WHERE email in (SELECT user FROM user_follow_user WHERE userFollow=?)";
+	private String qryGetCountFollowed = "SELECT COUNT(*) FROM user_follow_user WHERE user=?";
+	private String qryGetCountFollowers = "SELECT COUNT(*) FROM user_follow_user WHERE userFollow=?";
 	private String qryInsert = "INSERT INTO user_follow_user VALUES (?,?)";
-	private String qryDelete = "DELETE user_follow_user WHERE user = %s AND userFollow = %s";
+	private String qryDelete = "DELETE user_follow_user WHERE user=? AND userFollow=?";
 	
 	@Override
 	public List<Map<String, Object>> getListFollowed(String email) {
-		List<Map<String, Object>> list = template.queryForList(String.format(qryGetListFollowed, email));
+		List<Map<String, Object>> list = template.queryForList(qryGetListFollowed, email);
 		return list;
 	}
 
 	@Override
 	public List<Map<String, Object>> getListFollowers(String userEmail) {
-		List<Map<String, Object>> list = template.queryForList(String.format(qryGetListFollowers, userEmail));
+		List<Map<String, Object>> list = template.queryForList(qryGetListFollowers, userEmail);
 		return list;
 	}
 	
 	@Override
 	public int getCountFollowed(String email) {
-		int count = template.queryForObject(String.format(qryGetCountFollowed, email), Integer.class);
+		int count = template.queryForObject(qryGetCountFollowed, Integer.class, email);
 		return count;
 	}
 
 	@Override
 	public int getCountFollowers(String email) {
-		int count = template.queryForObject(String.format(qryGetCountFollowers, email), Integer.class);
+		int count = template.queryForObject(qryGetCountFollowers, Integer.class, email);
 		return count;
 	}
 	
@@ -58,10 +58,9 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 
 	@Override
 	public void delete(String userEmail, String userFollowEmail) {
-		template.query(String.format(qryDelete, userEmail, userFollowEmail),
+		template.query(qryDelete,
 				(ResultSet rs) -> {
 					rs.deleteRow();
-				}
-			);
+				}, userEmail, userFollowEmail);
 	}
 }

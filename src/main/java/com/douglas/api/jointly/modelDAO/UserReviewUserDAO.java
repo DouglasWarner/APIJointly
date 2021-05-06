@@ -18,10 +18,9 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	@Autowired
 	private JdbcTemplate template;
 	
-	private String qryGetList = "SELECT * FROM userReviewUser WHERE userEmail=%s";
-	private String qryInsert = "INSERT INTO user_review_user (user, userReview, review, stars) "
-								+ "VALUES (?,?,?,?)";
-	private String qryDelete = "DELETE user_review_user WHERE date=%s AND user=%s AND userReview=%s";
+	private String qryGetList = "SELECT * FROM user_review_user WHERE userEmail=?";
+	private String qryInsert = "INSERT INTO user_review_user (date, user, userReview, review, stars) VALUES (?,?,?,?,?)";
+	private String qryDelete = "DELETE user_review_user WHERE date=? AND user=? AND userReview=?";
 
 	@Override
 	public List<Map<String, Object>> getList(String userEmail) {
@@ -30,20 +29,19 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	}
 
 	@Override
-	public UserReviewUser insert(String userEmail, String userReviewEmail, String review, int stars) {
+	public UserReviewUser insert(GregorianCalendar date, String userEmail, String userReviewEmail, String review, int stars) {
 		UserReviewUser userJoinInitiative = template.queryForObject(qryInsert,
 				UserReviewUser.class,
-				userEmail, userReviewEmail, review, stars);
+				date, userEmail, userReviewEmail, review, stars);
 		return userJoinInitiative;
 	}
 
 	@Override
 	public void delete(GregorianCalendar date, String userEmail, String userReviewEmail) {
-		template.query(String.format(qryDelete, date, userEmail, userReviewEmail),
+		template.query(qryDelete,
 				(ResultSet rs) -> {
 					rs.deleteRow();
-				}
-			);
+				}, date, userEmail, userReviewEmail);
 	}
 
 	

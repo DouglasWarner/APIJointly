@@ -1,13 +1,18 @@
 package com.douglas.api.jointly.model;
 
+import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class UserReviewUser {
+public class UserReviewUser implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6139906187554854544L;
 	@Id
 	private GregorianCalendar date;
 	@Id
@@ -105,7 +110,5 @@ public class UserReviewUser {
 		} else if (!userReview.equals(other.userReview))
 			return false;
 		return true;
-	}
-    
-    
+	}    
 }

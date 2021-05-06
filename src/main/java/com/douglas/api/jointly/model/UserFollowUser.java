@@ -1,11 +1,17 @@
 package com.douglas.api.jointly.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class UserFollowUser {
+public class UserFollowUser implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6546520414916730238L;
 	@Id
 	private String user;
 	@Id

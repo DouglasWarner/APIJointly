@@ -18,12 +18,12 @@ public class UserDAO implements UserInterface {
 	private JdbcTemplate template;
 	
 	private String qryGetList = "SELECT * FROM user";
-	private String qryGetUser = "SELECT * FROM user WHERE email=%s";
+	private String qryGetUser = "SELECT * FROM user WHERE email=?";
 	private String qryInsert = "INSERT INTO user (email, password, name, phone, imagen, location, description) "
 												+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private String qryUpdate = "UPDATE user SET email=?, password=?, name=?, phone=?, imagen=?, location=?, description=? WHERE id=?";
-	private String qryDelete = "DELETE user WHERE id=%d";
-	private String qryGetInitiativeCreated = "SELECT * FROM initiative WHERE createBy=%s";
+	private String qryDelete = "DELETE user WHERE id=?";
+	private String qryGetInitiativeCreated = "SELECT * FROM initiative WHERE createdBy=?";
 	
 	@Override
 	public List<Map<String, Object>> getList() {
@@ -57,11 +57,10 @@ public class UserDAO implements UserInterface {
 
 	@Override
 	public void delete(int idUser) {
-		template.query(String.format(qryDelete, idUser),
+		template.query(qryDelete,
 				(ResultSet rs) -> {
 					rs.deleteRow();
-				}
-			);
+				}, idUser);
 	}
 
 	@Override

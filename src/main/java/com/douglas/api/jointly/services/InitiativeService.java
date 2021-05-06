@@ -33,8 +33,8 @@ public class InitiativeService implements InitiativeInterface {
 	}
 
 	@Override
-	public Initiative insert(String name, GregorianCalendar targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createBy, String refcode) {
-		Initiative initiative = initiativeDAO.insert(name, targetDate, description, targetArea, location, imagen, targetAmount, status, createBy, refcode);
+	public Initiative insert(String name, GregorianCalendar targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy, String refcode) {
+		Initiative initiative = initiativeDAO.insert(name, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode);
 		return initiative;
 	}
 

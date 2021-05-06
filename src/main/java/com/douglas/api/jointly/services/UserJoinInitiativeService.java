@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserJoinInitiativeInterface;
 import com.douglas.api.jointly.model.UserJoinInitiative;
 import com.douglas.api.jointly.modelDAO.UserJoinInitiativeDAO;
 
+@Service
 public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 
 	@Autowired
@@ -21,8 +23,8 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	}
 
 	@Override
-	public UserJoinInitiative insert(int idInitiative, String userEmail, int type) {
-		UserJoinInitiative joinInitiative = userJoinInitiativeDAO.insert(idInitiative, userEmail, type);
+	public UserJoinInitiative insert(GregorianCalendar date, int idInitiative, String userEmail, int type) {
+		UserJoinInitiative joinInitiative = userJoinInitiativeDAO.insert(date, idInitiative, userEmail, type);
 		return joinInitiative;
 	}
 
