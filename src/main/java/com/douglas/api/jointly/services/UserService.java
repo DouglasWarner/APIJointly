@@ -29,17 +29,15 @@ public class UserService implements UserInterface {
 	}
 
 	@Override
-	public User insert(String email, String password, String name, String phone, byte[] imagen, String location,
+	public int insert(String email, String password, String name, String phone, byte[] imagen, String location,
 			String description) {
-		User user = userDao.insert(email, password, name, phone, imagen, location, description);
-		return user;
+		return userDao.insert(email, password, name, phone, imagen, location, description);
 	}
 
 	@Override
-	public User update(String email, String password, String name, String phone, byte[] imagen, String location,
+	public int update(String email, String password, String name, String phone, byte[] imagen, String location,
 			String description, int id) {
-		User user = userDao.update(email, password, name, phone, imagen, location, description, id);
-		return user;
+		return userDao.update(email, password, name, phone, imagen, location, description, id);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.douglas.api.jointly.model;
 
-import java.util.GregorianCalendar;
+
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +20,7 @@ public class User {
     private byte[] imagen;
     private String location;
     private String description;
-    private GregorianCalendar createdAt;
+    private LocalDateTime createdAt;
 
     //private int userFollows;
     
@@ -28,7 +29,7 @@ public class User {
 	}
 
 	public User(int id, String email, String password, String name, String phone, byte[] imagen, String location,
-			String description, GregorianCalendar createdAt) {
+			String description, LocalDateTime createdAt) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -105,11 +106,11 @@ public class User {
 		this.description = description;
 	}
 
-	public GregorianCalendar getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(GregorianCalendar createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 

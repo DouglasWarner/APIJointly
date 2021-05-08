@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.douglas.api.jointly.interfaces.UserFollowUserInterface;
-import com.douglas.api.jointly.model.UserFollowUser;
 
 @Repository
 public class UserFollowUserDAO implements UserFollowUserInterface {
@@ -17,12 +16,12 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	@Autowired
 	private JdbcTemplate template;
 	
-	private String qryGetListFollowed = "SELECT * FROM user WHERE email in (SELECT userFollow FROM user_follow_user WHERE user=?)";
-	private String qryGetListFollowers = "SELECT * FROM user WHERE email in (SELECT user FROM user_follow_user WHERE userFollow=?)";
+	private String qryGetListFollowed = "SELECT * FROM user WHERE email in (SELECT user_follow FROM user_follow_user WHERE user=?)";
+	private String qryGetListFollowers = "SELECT * FROM user WHERE email in (SELECT user FROM user_follow_user WHERE user_follow=?)";
 	private String qryGetCountFollowed = "SELECT COUNT(*) FROM user_follow_user WHERE user=?";
-	private String qryGetCountFollowers = "SELECT COUNT(*) FROM user_follow_user WHERE userFollow=?";
+	private String qryGetCountFollowers = "SELECT COUNT(*) FROM user_follow_user WHERE user_follow=?";
 	private String qryInsert = "INSERT INTO user_follow_user VALUES (?,?)";
-	private String qryDelete = "DELETE user_follow_user WHERE user=? AND userFollow=?";
+	private String qryDelete = "DELETE user_follow_user WHERE user=? AND user_follow=?";
 	
 	@Override
 	public List<Map<String, Object>> getListFollowed(String email) {
@@ -49,11 +48,9 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	}
 	
 	@Override
-	public UserFollowUser insert(String userEmail, String userFollowEmail) {
-		UserFollowUser userFollowUser = template.queryForObject(qryInsert,
-				UserFollowUser.class,
+	public int insert(String userEmail, String userFollowEmail) {
+		return template.update(qryInsert,
 				userEmail, userFollowEmail);
-		return userFollowUser;
 	}
 
 	@Override

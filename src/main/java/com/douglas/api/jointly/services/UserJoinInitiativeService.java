@@ -1,6 +1,5 @@
 package com.douglas.api.jointly.services;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserJoinInitiativeInterface;
-import com.douglas.api.jointly.model.UserJoinInitiative;
 import com.douglas.api.jointly.modelDAO.UserJoinInitiativeDAO;
 
 @Service
@@ -23,19 +21,17 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	}
 
 	@Override
-	public UserJoinInitiative insert(GregorianCalendar date, int idInitiative, String userEmail, int type) {
-		UserJoinInitiative joinInitiative = userJoinInitiativeDAO.insert(date, idInitiative, userEmail, type);
-		return joinInitiative;
+	public int insert(String date, int idInitiative, String userEmail, int type) {
+		return userJoinInitiativeDAO.insert(date, idInitiative, userEmail, type);
 	}
 
 	@Override
-	public UserJoinInitiative update(GregorianCalendar date, int idInitiative, String userEmail, int type) {
-		UserJoinInitiative joinInitiative = userJoinInitiativeDAO.update(date, idInitiative, userEmail, type);
-		return joinInitiative;
+	public int update(String date, int idInitiative, String userEmail, int type) {
+		return userJoinInitiativeDAO.update(date, idInitiative, userEmail, type);
 	}
 
 	@Override
-	public void delete(GregorianCalendar date, int idInitiative, String userEmail) {
+	public void delete(String date, int idInitiative, String userEmail) {
 		userJoinInitiativeDAO.delete(date, idInitiative, userEmail);
 	}
 

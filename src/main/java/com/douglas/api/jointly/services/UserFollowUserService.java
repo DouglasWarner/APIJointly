@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserFollowUserInterface;
-import com.douglas.api.jointly.model.UserFollowUser;
 import com.douglas.api.jointly.modelDAO.UserFollowUserDAO;
 
 @Service
@@ -37,9 +36,8 @@ public class UserFollowUserService implements UserFollowUserInterface{
 	}
 	
 	@Override
-	public UserFollowUser insert(String userEmail, String userFollowEmail) {
-		UserFollowUser followUser = UserFollowUserDAO.insert(userEmail, userFollowEmail);
-		return followUser;
+	public int insert(String userEmail, String userFollowEmail) {
+		return UserFollowUserDAO.insert(userEmail, userFollowEmail);
 	}
 
 	@Override

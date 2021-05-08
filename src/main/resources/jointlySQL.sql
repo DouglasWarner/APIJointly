@@ -58,13 +58,13 @@ create table if not exists user_review_user (
 
 create table if not exists user_join_initiative (
 	date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	id_user VARCHAR(255) NOT NULL,
+	user_email VARCHAR(255) NOT NULL,
 	id_initiative INTEGER NOT NULL,
 	type BIT DEFAULT 0 NOT NULL,
 	
 	PRIMARY KEY (date, user, initiative),
 	
-	FOREIGN KEY (id_user) REFERENCES user(email),
+	FOREIGN KEY (user_email) REFERENCES user(email),
 	FOREIGN KEY (id_initiative) REFERENCES initiative(id)
 );
 
@@ -82,13 +82,13 @@ VALUES ('iniciativa 3', '2021-04-23', 'descripcion 3', 'Recolecta', 'location', 
 INSERT INTO initiative(name, target_date, description, target_area, location, imagen, target_amount, status, created_by, ref_code)
 VALUES ('iniciativa 4', '2021-04-23', 'descripcion 4', 'Recolecta', 'location', null, '30', 'A', 'douglas@gmail.com', '145');
 
-INSERT INTO user_join_initiative(id_initiative, id_user, type) 
+INSERT INTO user_join_initiative(id_initiative, user_email, type) 
 VALUES (2,'email@gmail.com', 0);
 
 INSERT INTO user_review_user (user, user_review, review, stars)
 VALUES ('douglas@gmail.com', 'email@gmail.com', null, 3);
 
 
-UPDATE user_join_initiative SET type=1 WHERE date='2021-05-04 23:48:51' AND id_initiative=2 AND id_user='douglas@gmail.com';
+UPDATE user_join_initiative SET type=1 WHERE date='2021-05-04 23:48:51' AND id_initiative=2 AND user_email='douglas@gmail.com';
 
 UPDATE initiative SET name='ini 1', target_date='2021-04-21', description='desc 2', target_area='Saneamiento', location='Sevilla', imagen=null, target_amount=2, status='D' where id=2;
