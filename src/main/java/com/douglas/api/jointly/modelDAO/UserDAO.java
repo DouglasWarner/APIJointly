@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ import com.douglas.api.jointly.model.User;
 
 @Repository
 public class UserDAO implements UserInterface {
-
+	
 	@Autowired
 	private JdbcTemplate template;
 	
@@ -23,7 +24,7 @@ public class UserDAO implements UserInterface {
 												+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private String qryUpdate = "UPDATE user SET email=?, password=?, name=?, phone=?, imagen=?, location=?, description=? WHERE id=?";
 	private String qryDelete = "DELETE user WHERE id=?";
-	private String qryGetInitiativeCreated = "SELECT * FROM initiative WHERE createdBy=?";
+	private String qryGetInitiativeCreated = "SELECT * FROM initiative WHERE created_by=?";
 	
 	@Override
 	public List<Map<String, Object>> getList() {
@@ -33,26 +34,21 @@ public class UserDAO implements UserInterface {
 
 	@Override
 	public User getUser(String email) {
-		User user = template.queryForObject(qryGetUser, User.class, email);
-		return user;
+		return template.queryForObject(qryGetUser, new BeanPropertyRowMapper<User>(User.class), email);
 	}
 	
 	@Override
-	public User insert(String email, String password, String name, String phone, byte[] imagen, String location,
+	public int insert(String email, String password, String name, String phone, byte[] imagen, String location,
 			String description) {
-		User user = template.queryForObject(qryInsert,
-				User.class,
+		return template.update(qryInsert,
 				email, password, name, phone, imagen, location, description);
-		return user;
 	}
 
 	@Override
-	public User update(String email, String password, String name, String phone, byte[] imagen, String location,
+	public int update(String email, String password, String name, String phone, byte[] imagen, String location,
 			String description, int id) {
-		User user = template.queryForObject(qryUpdate,
-				User.class,
+		return template.update(qryUpdate,
 				email, password, name, phone, imagen, location, description, id);
-		return user;
 	}
 
 	@Override

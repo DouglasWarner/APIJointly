@@ -1,6 +1,5 @@
 package com.douglas.api.jointly.services;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -33,15 +32,13 @@ public class InitiativeService implements InitiativeInterface {
 	}
 
 	@Override
-	public Initiative insert(String name, GregorianCalendar targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy, String refcode) {
-		Initiative initiative = initiativeDAO.insert(name, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode);
-		return initiative;
+	public int insert(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy, String refcode) {
+		return initiativeDAO.insert(name, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode);
 	}
 
 	@Override
-	public Initiative update(String name, GregorianCalendar targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, int id) {
-		Initiative initiative = initiativeDAO.update(name, targetDate, description, targetArea, location, imagen, targetAmount, status, id);
-		return initiative;
+	public int update(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, int id) {
+		return initiativeDAO.update(name, targetDate, description, targetArea, location, imagen, targetAmount, status, id);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package com.douglas.api.jointly.model;
 
 import java.io.Serializable;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,7 +14,7 @@ public class UserReviewUser implements Serializable {
 	 */
 	private static final long serialVersionUID = 6139906187554854544L;
 	@Id
-	private GregorianCalendar date;
+	private LocalDateTime date;
 	@Id
 	private String user;
 	@Id
@@ -26,7 +26,7 @@ public class UserReviewUser implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserReviewUser(GregorianCalendar date, String idUser, String idUserReview, String review, int stars) {
+	public UserReviewUser(LocalDateTime date, String idUser, String idUserReview, String review, int stars) {
 		super();
 		this.date = date;
 		this.user = idUser;
@@ -35,11 +35,11 @@ public class UserReviewUser implements Serializable {
 		this.stars = stars;
 	}
 
-	public GregorianCalendar getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(GregorianCalendar date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

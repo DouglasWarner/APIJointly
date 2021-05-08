@@ -1,7 +1,6 @@
 package com.douglas.api.jointly.modelDAO;
 
 import java.sql.ResultSet;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.douglas.api.jointly.interfaces.UserReviewUserInterface;
-import com.douglas.api.jointly.model.UserReviewUser;
 
 @Repository
 public class UserReviewUserDAO implements UserReviewUserInterface{
@@ -18,9 +16,9 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	@Autowired
 	private JdbcTemplate template;
 	
-	private String qryGetList = "SELECT * FROM user_review_user WHERE userEmail=?";
-	private String qryInsert = "INSERT INTO user_review_user (date, user, userReview, review, stars) VALUES (?,?,?,?,?)";
-	private String qryDelete = "DELETE user_review_user WHERE date=? AND user=? AND userReview=?";
+	private String qryGetList = "SELECT * FROM user_review_user WHERE user_review=?";
+	private String qryInsert = "INSERT INTO user_review_user (date, user, user_review, review, stars) VALUES (?,?,?,?,?)";
+	private String qryDelete = "DELETE user_review_user WHERE date=? AND user=? AND user_review=?";
 
 	@Override
 	public List<Map<String, Object>> getList(String userEmail) {
@@ -29,15 +27,13 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	}
 
 	@Override
-	public UserReviewUser insert(GregorianCalendar date, String userEmail, String userReviewEmail, String review, int stars) {
-		UserReviewUser userJoinInitiative = template.queryForObject(qryInsert,
-				UserReviewUser.class,
+	public int insert(String date, String userEmail, String userReviewEmail, String review, int stars) {
+		return template.update(qryInsert,
 				date, userEmail, userReviewEmail, review, stars);
-		return userJoinInitiative;
 	}
 
 	@Override
-	public void delete(GregorianCalendar date, String userEmail, String userReviewEmail) {
+	public void delete(String date, String userEmail, String userReviewEmail) {
 		template.query(qryDelete,
 				(ResultSet rs) -> {
 					rs.deleteRow();

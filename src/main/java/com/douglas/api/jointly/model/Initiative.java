@@ -1,6 +1,6 @@
 package com.douglas.api.jointly.model;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,8 +13,8 @@ public class Initiative {
 	@GeneratedValue
 	private int id;
     private String name;
-    private GregorianCalendar createdAt;
-    private GregorianCalendar targetDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime targetDate;
     private String description;
     private String targetArea;
     private String location;
@@ -30,7 +30,7 @@ public class Initiative {
 		// TODO Auto-generated constructor stub
 	}
 
-    public Initiative(int id, String name, GregorianCalendar createdAt, GregorianCalendar targetDate, String description, String targetArea,
+    public Initiative(int id, String name, LocalDateTime createdAt, LocalDateTime targetDate, String description, String targetArea,
 			String location, byte[] imagen, int targetAmount, String status, String createdBy, String refCode) {
 		super();
 		this.id = id;
@@ -63,19 +63,19 @@ public class Initiative {
 		this.name = name;
 	}
 
-	public GregorianCalendar getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(GregorianCalendar createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public GregorianCalendar getTargetDate() {
+	public LocalDateTime getTargetDate() {
 		return targetDate;
 	}
 
-	public void setTargetDate(GregorianCalendar targetDate) {
+	public void setTargetDate(LocalDateTime targetDate) {
 		this.targetDate = targetDate;
 	}
 

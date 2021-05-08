@@ -1,7 +1,7 @@
 package com.douglas.api.jointly.model;
 
 import java.io.Serializable;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,30 +14,30 @@ public class UserJoinInitiative implements Serializable {
 	 */
 	private static final long serialVersionUID = -4237903622543173184L;
 	@Id
-	private GregorianCalendar date;
+	private LocalDateTime date;
 	@Id
 	private int idInitiative;
 	@Id
-    private String idUser;
+    private String userEmail;
     private byte type;
     
     public UserJoinInitiative() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserJoinInitiative(GregorianCalendar date, int idInitiative, String idUser, byte type) {
+	public UserJoinInitiative(LocalDateTime date, int idInitiative, String userEmail, byte type) {
 		super();
 		this.date = date;
 		this.idInitiative = idInitiative;
-		this.idUser = idUser;
+		this.userEmail = userEmail;
 		this.type = type;
 	}
 
-	public GregorianCalendar getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(GregorianCalendar date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
@@ -50,11 +50,11 @@ public class UserJoinInitiative implements Serializable {
 	}
 
 	public String getIdUser() {
-		return idUser;
+		return userEmail;
 	}
 
 	public void setIdUser(String idUser) {
-		this.idUser = idUser;
+		this.userEmail = idUser;
 	}
 
 	public byte getType() {
@@ -71,7 +71,7 @@ public class UserJoinInitiative implements Serializable {
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + idInitiative;
-		result = prime * result + ((idUser == null) ? 0 : idUser.hashCode());
+		result = prime * result + ((userEmail == null) ? 0 : userEmail.hashCode());
 		return result;
 	}
 
@@ -91,10 +91,10 @@ public class UserJoinInitiative implements Serializable {
 			return false;
 		if (idInitiative != other.idInitiative)
 			return false;
-		if (idUser == null) {
-			if (other.idUser != null)
+		if (userEmail == null) {
+			if (other.userEmail != null)
 				return false;
-		} else if (!idUser.equals(other.idUser))
+		} else if (!userEmail.equals(other.userEmail))
 			return false;
 		return true;
 	}    
