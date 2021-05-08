@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserReviewUserInterface;
 import com.douglas.api.jointly.model.UserReviewUser;
 import com.douglas.api.jointly.modelDAO.UserReviewUserDAO;
 
+@Service
 public class UserReviewUserService implements UserReviewUserInterface {
 
 	@Autowired
@@ -22,8 +24,8 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	}
 
 	@Override
-	public UserReviewUser insert(String userEmail, String userReviewEmail, String review, int stars) {
-		UserReviewUser reviewUser = userReviewUserDAO.insert(userEmail, userReviewEmail, review, stars);
+	public UserReviewUser insert(GregorianCalendar date, String userEmail, String userReviewEmail, String review, int stars) {
+		UserReviewUser reviewUser = userReviewUserDAO.insert(date, userEmail, userReviewEmail, review, stars);
 		return reviewUser;
 	}
 

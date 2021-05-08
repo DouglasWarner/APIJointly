@@ -18,12 +18,12 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 	@Autowired
 	private JdbcTemplate template;
 	
-	private String qryGetUsersJoined = "SELECT * FROM user WHERE email in (SELECT userEmail FROM userJoinInitiative WHERE idInitiative=%d)";
-	private String qryInitiativeJoinedByUser = "SELECT * FROM initiative WHERE id in (SELECT idInitiative FROM userJoinInitiative WHERE userEmail=%s)";
-	private String qryInsert = "INSERT INTO user_join_initiative(idInitiative, idUser, type) "
-								+ "VALUES (?,?,?)";
+	private String qryGetUsersJoined = "SELECT * FROM user WHERE email in (SELECT userEmail FROM user_join_initiative WHERE idInitiative=?)";
+	private String qryInsert = "INSERT INTO user_join_initiative(date, idInitiative, idUser, type) "
+								+ "VALUES (?,?,?,?)";
 	private String qryUpdate = "UPDATE user_join_initiative SET type=? WHERE date=? AND idInitiative=? AND idUser=?";
-	private String qryDelete = "DELETE user_join_initiative WHERE date=%s AND idInitiative=%d AND userEmail=%s";
+	private String qryDelete = "DELETE user_join_initiative WHERE date=? AND idInitiative=? AND userEmail=?";
+	private String qryInitiativeJoinedByUser = "SELECT * FROM initiative WHERE id in (SELECT idInitiative FROM user_join_initiative WHERE userEmail=?)";
 
 	@Override
 	public List<Map<String, Object>> getUsersJoined(int idInitiative) {
@@ -32,10 +32,10 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 	}
 
 	@Override
-	public UserJoinInitiative insert(int idInitiative, String userEmail, int type) {
+	public UserJoinInitiative insert(GregorianCalendar date, int idInitiative, String userEmail, int type) {
 		UserJoinInitiative userJoinInitiative = template.queryForObject(qryInsert,
 				UserJoinInitiative.class,
-				idInitiative, userEmail, type);
+				date, idInitiative, userEmail, type);
 		return userJoinInitiative;
 	}
 
@@ -49,11 +49,10 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 
 	@Override
 	public void delete(GregorianCalendar date, int idInitiative, String userEmail) {
-		template.query(String.format(qryDelete, date, idInitiative, userEmail),
+		template.query(qryDelete,
 				(ResultSet rs) -> {
 					rs.deleteRow();
-				}
-			);
+				}, date, idInitiative, userEmail);
 	}
 
 	@Override

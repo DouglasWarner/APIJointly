@@ -19,11 +19,11 @@ public class InitiativeDAO implements InitiativeInterface {
 	private JdbcTemplate template;
 	
 	private String qryGetList = "SELECT * FROM initiative";
-	private String qryGetInitiative = "SELECT * FROM initiative WHERE id=%s";
 	private String qryGetListByName = "SELECT * FROM initiative WHERE name=?";
-	private String qryInsertInitiative = "INSERT INTO initiative (name, targetDate, description, targetArea, location, imagen, targetAmount, status, createBy, refCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String qryGetInitiative = "SELECT * FROM initiative WHERE id=?";
+	private String qryInsertInitiative = "INSERT INTO initiative (name, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String qryUpdateInitiative = "UPDATE initiative SET name=?, targetDate=?, description=?, location=?, imagen=?, targetAmount=?, status=? where id=?";
-	private String qryDelete = "DELETE initiative WHERE id=%d";
+	private String qryDelete = "DELETE initiative WHERE id=?";
 	
 	@Override
 	public List<Map<String, Object>> getList() {
@@ -39,7 +39,7 @@ public class InitiativeDAO implements InitiativeInterface {
 	
 	@Override
 	public Initiative getInitiativeById(int id) {
-		Initiative initiative = template.queryForObject(String.format(qryGetInitiative, id), Initiative.class);
+		Initiative initiative = template.queryForObject(qryGetInitiative, Initiative.class, id);
 		return initiative;
 	}
 
@@ -48,10 +48,10 @@ public class InitiativeDAO implements InitiativeInterface {
 							String description, String targetArea,
 							String location, byte[] imagen,
 							int targetAmount, String status,
-							String createBy, String refcode) {
+							String createdBy, String refcode) {
 		Initiative initiative = template.queryForObject(qryInsertInitiative,
 				Initiative.class,
-				name, description, targetDate, location, imagen, targetAmount, status, createBy, refcode);
+				name, description, targetDate, location, imagen, targetAmount, status, createdBy, refcode);
 		
 		return initiative;
 	}
@@ -70,10 +70,9 @@ public class InitiativeDAO implements InitiativeInterface {
 
 	@Override
 	public void delete(int id) {
-		template.query(String.format(qryDelete, id),
+		template.query(qryDelete,
 				(ResultSet rs) -> {
 					rs.deleteRow();
-				}
-			);
+				}, id);
 	}
 }
