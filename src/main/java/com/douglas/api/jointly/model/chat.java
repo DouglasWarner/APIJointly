@@ -22,7 +22,6 @@ public class chat implements Serializable {
 	private String mensaje;
 	
 	public chat() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public chat(GregorianCalendar date, int idInitiative, String emailUser, String mensaje) {

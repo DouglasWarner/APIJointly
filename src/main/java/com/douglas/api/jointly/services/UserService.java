@@ -41,13 +41,13 @@ public class UserService implements UserInterface {
 	}
 
 	@Override
-	public void delete(int idUser) {
-		userDao.delete(idUser);
+	public int delete(int idUser) {
+		return userDao.delete(idUser);
 	}
 
 	@Override
-	public List<Map<String, Object>> getInitiativeCreated(String email) {
-		List<Map<String, Object>> list = userDao.getInitiativeCreated(email);
+	public List<Map<String, Object>> getInitiativeCreatedByUser(String email) {
+		List<Map<String, Object>> list = userDao.getInitiativeCreatedByUser(email);
 		return list;
 	} 
 }

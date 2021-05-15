@@ -1,7 +1,6 @@
 package com.douglas.api.jointly.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,38 +13,28 @@ public class UserJoinInitiative implements Serializable {
 	 */
 	private static final long serialVersionUID = -4237903622543173184L;
 	@Id
-	private LocalDateTime date;
-	@Id
-	private int idInitiative;
+	private long idInitiative;
 	@Id
     private String userEmail;
-    private byte type;
+	private String date;
+    private int type;
     
     public UserJoinInitiative() {
-		// TODO Auto-generated constructor stub
 	}
 
-	public UserJoinInitiative(LocalDateTime date, int idInitiative, String userEmail, byte type) {
+	public UserJoinInitiative(long idInitiative, String userEmail, String date, int type) {
 		super();
-		this.date = date;
 		this.idInitiative = idInitiative;
 		this.userEmail = userEmail;
+		this.date = date;
 		this.type = type;
 	}
 
-	public LocalDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
-
-	public int getIdInitiative() {
+	public long getIdInitiative() {
 		return idInitiative;
 	}
 
-	public void setIdInitiative(int idInitiative) {
+	public void setIdInitiative(long idInitiative) {
 		this.idInitiative = idInitiative;
 	}
 
@@ -57,11 +46,19 @@ public class UserJoinInitiative implements Serializable {
 		this.userEmail = idUser;
 	}
 
-	public byte getType() {
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public int getType() {
 		return type;
 	}
 
-	public void setType(byte type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 
@@ -69,8 +66,7 @@ public class UserJoinInitiative implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + idInitiative;
+		result = prime * result + (int) (idInitiative ^ (idInitiative >>> 32));
 		result = prime * result + ((userEmail == null) ? 0 : userEmail.hashCode());
 		return result;
 	}
@@ -84,11 +80,6 @@ public class UserJoinInitiative implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		UserJoinInitiative other = (UserJoinInitiative) obj;
-		if (date == null) {
-			if (other.date != null)
-				return false;
-		} else if (!date.equals(other.date))
-			return false;
 		if (idInitiative != other.idInitiative)
 			return false;
 		if (userEmail == null) {
@@ -97,5 +88,5 @@ public class UserJoinInitiative implements Serializable {
 		} else if (!userEmail.equals(other.userEmail))
 			return false;
 		return true;
-	}    
+	}   
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserFollowUserInterface;
+import com.douglas.api.jointly.model.UserFollowUser;
 import com.douglas.api.jointly.modelDAO.UserFollowUserDAO;
 
 @Service
@@ -41,8 +42,13 @@ public class UserFollowUserService implements UserFollowUserInterface{
 	}
 
 	@Override
-	public void delete(String userEmail, String userFollowEmail) {
-		UserFollowUserDAO.delete(userEmail, userFollowEmail);
+	public int delete(String userEmail, String userFollowEmail) {
+		return UserFollowUserDAO.delete(userEmail, userFollowEmail);
+	}
+
+	@Override
+	public UserFollowUser getUserFollowUser(String userEmail, String userFollowEmail) {
+		return UserFollowUserDAO.getUserFollowUser(userEmail, userFollowEmail);
 	}
 
 }

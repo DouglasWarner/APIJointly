@@ -1,6 +1,5 @@
 package com.douglas.api.jointly.modelDAO;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class UserDAO implements UserInterface {
 	private String qryInsert = "INSERT INTO user (email, password, name, phone, imagen, location, description) "
 												+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 	private String qryUpdate = "UPDATE user SET email=?, password=?, name=?, phone=?, imagen=?, location=?, description=? WHERE id=?";
-	private String qryDelete = "DELETE user WHERE id=?";
+	private String qryDelete = "DELETE FROM user WHERE id=?";
 	private String qryGetInitiativeCreated = "SELECT * FROM initiative WHERE created_by=?";
 	
 	@Override
@@ -52,15 +51,12 @@ public class UserDAO implements UserInterface {
 	}
 
 	@Override
-	public void delete(int idUser) {
-		template.query(qryDelete,
-				(ResultSet rs) -> {
-					rs.deleteRow();
-				}, idUser);
+	public int delete(int idUser) {
+		return template.update(qryDelete, idUser);
 	}
 
 	@Override
-	public List<Map<String, Object>> getInitiativeCreated(String email) {
+	public List<Map<String, Object>> getInitiativeCreatedByUser(String email) {
 		List<Map<String, Object>> lista = template.queryForList(qryGetInitiativeCreated, email);
 		return lista;
 	}

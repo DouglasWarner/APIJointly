@@ -1,14 +1,17 @@
 package com.douglas.api.jointly.modelDAO;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.douglas.api.jointly.interfaces.UserFollowUserInterface;
+import com.douglas.api.jointly.model.UserFollowUser;
 
 @Repository
 public class UserFollowUserDAO implements UserFollowUserInterface {
@@ -21,7 +24,8 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	private String qryGetCountFollowed = "SELECT COUNT(*) FROM user_follow_user WHERE user=?";
 	private String qryGetCountFollowers = "SELECT COUNT(*) FROM user_follow_user WHERE user_follow=?";
 	private String qryInsert = "INSERT INTO user_follow_user VALUES (?,?)";
-	private String qryDelete = "DELETE user_follow_user WHERE user=? AND user_follow=?";
+	private String qryDelete = "DELETE FROM user_follow_user WHERE user=? AND user_follow=?";
+	private String qryGetUserFollowUser = "SELECT * FROM user_follow_user WHERE user=? AND user_follow=?";
 	
 	@Override
 	public List<Map<String, Object>> getListFollowed(String email) {
@@ -54,10 +58,24 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	}
 
 	@Override
-	public void delete(String userEmail, String userFollowEmail) {
-		template.query(qryDelete,
-				(ResultSet rs) -> {
-					rs.deleteRow();
-				}, userEmail, userFollowEmail);
+	public int delete(String userEmail, String userFollowEmail) {
+		return template.update(qryDelete, userEmail, userFollowEmail);
+	}
+
+	@Override
+	public UserFollowUser getUserFollowUser(String userEmail, String userFollowEmail) {
+		return template.queryForObject(qryGetUserFollowUser, 
+				new BeanPropertyRowMapper<>(UserFollowUser.class, true) {
+			
+					@Override
+					public UserFollowUser mapRow(ResultSet rs, int rowNumber) throws SQLException {
+						UserFollowUser followUser = new UserFollowUser();
+						followUser.setIdUser(rs.getString(1));
+						followUser.setIdUserFollowed(rs.getString(2));
+						
+						return followUser;
+					}
+			
+				} , userEmail, userFollowEmail);
 	}
 }

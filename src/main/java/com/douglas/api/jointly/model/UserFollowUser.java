@@ -18,7 +18,6 @@ public class UserFollowUser implements Serializable {
     private String userFollow;
     
     public UserFollowUser() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public UserFollowUser(String idUser, String idUserFollowed) {

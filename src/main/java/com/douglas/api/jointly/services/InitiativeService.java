@@ -27,22 +27,22 @@ public class InitiativeService implements InitiativeInterface {
 	}
 	
 	@Override
-	public Initiative getInitiativeById(int id) {
+	public Initiative getInitiativeById(long id) {
 		return initiativeDAO.getInitiativeById(id);
 	}
 
 	@Override
-	public int insert(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy, String refcode) {
+	public long insert(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy, String refcode) {
 		return initiativeDAO.insert(name, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode);
 	}
 
 	@Override
-	public int update(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, int id) {
+	public int update(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, long id) {
 		return initiativeDAO.update(name, targetDate, description, targetArea, location, imagen, targetAmount, status, id);
 	}
 
 	@Override
-	public void delete(int id) {
-		initiativeDAO.delete(id);		
+	public int delete(long id) {
+		return initiativeDAO.delete(id);		
 	}
 }

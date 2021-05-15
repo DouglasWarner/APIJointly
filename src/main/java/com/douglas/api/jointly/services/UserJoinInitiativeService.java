@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserJoinInitiativeInterface;
+import com.douglas.api.jointly.model.UserJoinInitiative;
 import com.douglas.api.jointly.modelDAO.UserJoinInitiativeDAO;
 
 @Service
@@ -16,30 +17,37 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	private UserJoinInitiativeDAO userJoinInitiativeDAO;
 
 	@Override
-	public List<Map<String, Object>> getUsersJoined(int idInitiative) {
-		return userJoinInitiativeDAO.getUsersJoined(idInitiative);
-	}
-
-	@Override
-	public int insert(String date, int idInitiative, String userEmail, int type) {
-		return userJoinInitiativeDAO.insert(date, idInitiative, userEmail, type);
-	}
-
-	@Override
-	public int update(String date, int idInitiative, String userEmail, int type) {
-		return userJoinInitiativeDAO.update(date, idInitiative, userEmail, type);
-	}
-
-	@Override
-	public void delete(String date, int idInitiative, String userEmail) {
-		userJoinInitiativeDAO.delete(date, idInitiative, userEmail);
-	}
-
-	@Override
-	public List<Map<String, Object>> getInitiativeJoinedByUser(String userEmail) {
-		List<Map<String, Object>> list = userJoinInitiativeDAO.getInitiativeJoinedByUser(userEmail);
-		return list;
+	public List<Map<String, Object>> getUsersJoined() {
+		return userJoinInitiativeDAO.getUsersJoined();
 	}
 	
-	
+	@Override
+	public List<Map<String, Object>> getUsersJoinedByInitiative(long idInitiative) {
+		return userJoinInitiativeDAO.getUsersJoinedByInitiative(idInitiative);
+	}
+
+	@Override
+	public long insert(long idInitiative, String userEmail, int type) {
+		return userJoinInitiativeDAO.insert(idInitiative, userEmail, type);
+	}
+
+	@Override
+	public int update(long idInitiative, String userEmail, int type) {
+		return userJoinInitiativeDAO.update(idInitiative, userEmail, type);
+	}
+
+	@Override
+	public int delete(long idInitiative, String userEmail) {
+		return userJoinInitiativeDAO.delete(idInitiative, userEmail);
+	}
+
+	@Override
+	public List<Map<String, Object>> getInitiativeJoinedByUser(String userEmail, int type) {
+		return userJoinInitiativeDAO.getInitiativeJoinedByUser(userEmail, type);
+	}
+
+	@Override
+	public UserJoinInitiative getUserJoinInitiative(long idInitiative, String userEmail) {
+		return userJoinInitiativeDAO.getUserJoinInitiative(idInitiative, userEmail);
+	}	
 }

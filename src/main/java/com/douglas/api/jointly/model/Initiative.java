@@ -1,7 +1,5 @@
 package com.douglas.api.jointly.model;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -11,10 +9,10 @@ public class Initiative {
 	
 	@Id
 	@GeneratedValue
-	private int id;
+	private long id;
     private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime targetDate;
+    private String createdAt;
+    private String targetDate;
     private String description;
     private String targetArea;
     private String location;
@@ -27,10 +25,25 @@ public class Initiative {
     //private int countUserJoined;
     
     public Initiative() {
-		// TODO Auto-generated constructor stub
+	}
+        
+    public Initiative(String name, String targetDate, String description,
+			String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy,
+			String refCode) {
+		super();
+		this.name = name;
+		this.targetDate = targetDate;
+		this.description = description;
+		this.targetArea = targetArea;
+		this.location = location;
+		this.imagen = imagen;
+		this.targetAmount = targetAmount;
+		this.status = status;
+		this.createdBy = createdBy;
+		this.refCode = refCode;
 	}
 
-    public Initiative(int id, String name, LocalDateTime createdAt, LocalDateTime targetDate, String description, String targetArea,
+	public Initiative(long id, String name, String createdAt, String targetDate, String description, String targetArea,
 			String location, byte[] imagen, int targetAmount, String status, String createdBy, String refCode) {
 		super();
 		this.id = id;
@@ -47,11 +60,11 @@ public class Initiative {
 		this.refCode = refCode;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -63,19 +76,19 @@ public class Initiative {
 		this.name = name;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	public LocalDateTime getTargetDate() {
+	public String getTargetDate() {
 		return targetDate;
 	}
 
-	public void setTargetDate(LocalDateTime targetDate) {
+	public void setTargetDate(String targetDate) {
 		this.targetDate = targetDate;
 	}
 
@@ -147,7 +160,7 @@ public class Initiative {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
 

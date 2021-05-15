@@ -1,8 +1,5 @@
 package com.douglas.api.jointly.model;
 
-
-import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,18 +17,32 @@ public class User {
     private byte[] imagen;
     private String location;
     private String description;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     //private int userFollows;
     
     public User() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public User(int id, String email, String password, String name, String phone, byte[] imagen, String location,
-			String description, LocalDateTime createdAt) {
+			String description, String createdAt) {
 		super();
 		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.phone = phone;
+		this.imagen = imagen;
+		this.location = location;
+		this.description = description;
+		this.createdAt = createdAt;
+	}
+	
+	
+
+	public User(String email, String password, String name, String phone, byte[] imagen, String location,
+			String description, String createdAt) {
+		super();
 		this.email = email;
 		this.password = password;
 		this.name = name;
@@ -106,11 +117,11 @@ public class User {
 		this.description = description;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
 

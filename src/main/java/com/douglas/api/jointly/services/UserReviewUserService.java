@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.douglas.api.jointly.interfaces.UserReviewUserInterface;
+import com.douglas.api.jointly.model.UserReviewUser;
 import com.douglas.api.jointly.modelDAO.UserReviewUserDAO;
 
 @Service
@@ -22,13 +23,18 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	}
 
 	@Override
-	public int insert(String date, String userEmail, String userReviewEmail, String review, int stars) {
-		return userReviewUserDAO.insert(date, userEmail, userReviewEmail, review, stars);
+	public int insert(String userEmail, String userReviewEmail, String review, int stars) {
+		return userReviewUserDAO.insert(userEmail, userReviewEmail, review, stars);
 	}
 
 	@Override
-	public void delete(String date, String userEmail, String userReviewEmail) {
-		userReviewUserDAO.delete(date, userEmail, userReviewEmail);
+	public int delete(String userEmail, String userReviewEmail) {
+		return userReviewUserDAO.delete(userEmail, userReviewEmail);
+	}
+
+	@Override
+	public UserReviewUser getReview(String userEmail, String userReviewEmail) {
+		return userReviewUserDAO.getReview(userEmail, userReviewEmail);
 	}
 	
 }

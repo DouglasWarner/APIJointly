@@ -14,6 +14,6 @@ public interface UserInterface {
 	public int update(String email, String password, String name, 
 			String phone, byte[] imagen, String location, 
 			String description, int id);
-	public void delete(int idUser);
-	public List<Map<String, Object>> getInitiativeCreated(String email);
+	public int delete(int idUser);
+	public List<Map<String, Object>> getInitiativeCreatedByUser(String email);
 }

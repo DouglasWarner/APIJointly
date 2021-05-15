@@ -1,7 +1,6 @@
 package com.douglas.api.jointly.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,32 +13,30 @@ public class UserReviewUser implements Serializable {
 	 */
 	private static final long serialVersionUID = 6139906187554854544L;
 	@Id
-	private LocalDateTime date;
-	@Id
 	private String user;
 	@Id
     private String userReview;
+	private String date;
     private String review;
     private int stars;
     
     public UserReviewUser() {
-		// TODO Auto-generated constructor stub
 	}
 
-	public UserReviewUser(LocalDateTime date, String idUser, String idUserReview, String review, int stars) {
+	public UserReviewUser(String user, String userReview, String date, String review, int stars) {
 		super();
+		this.user = user;
+		this.userReview = userReview;
 		this.date = date;
-		this.user = idUser;
-		this.userReview = idUserReview;
 		this.review = review;
 		this.stars = stars;
 	}
 
-	public LocalDateTime getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDateTime date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -79,7 +76,6 @@ public class UserReviewUser implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		result = prime * result + ((userReview == null) ? 0 : userReview.hashCode());
 		return result;
@@ -94,11 +90,6 @@ public class UserReviewUser implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		UserReviewUser other = (UserReviewUser) obj;
-		if (date == null) {
-			if (other.date != null)
-				return false;
-		} else if (!date.equals(other.date))
-			return false;
 		if (user == null) {
 			if (other.user != null)
 				return false;
@@ -110,5 +101,5 @@ public class UserReviewUser implements Serializable {
 		} else if (!userReview.equals(other.userReview))
 			return false;
 		return true;
-	}    
+	} 
 }
