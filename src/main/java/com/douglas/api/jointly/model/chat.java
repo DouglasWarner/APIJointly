@@ -20,16 +20,18 @@ public class chat implements Serializable {
 	@Id
 	private String emailUser;
 	private String mensaje;
+	private boolean is_sync;
 	
 	public chat() {
 	}
 
-	public chat(GregorianCalendar date, int idInitiative, String emailUser, String mensaje) {
+	public chat(GregorianCalendar date, int idInitiative, String emailUser, String mensaje, boolean is_sync) {
 		super();
 		this.date = date;
 		this.idInitiative = idInitiative;
 		this.emailUser = emailUser;
 		this.mensaje = mensaje;
+		this.is_sync = is_sync;
 	}
 
 	public GregorianCalendar getDate() {
@@ -62,6 +64,14 @@ public class chat implements Serializable {
 
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;
+	}
+
+	public boolean isIs_sync() {
+		return is_sync;
+	}
+
+	public void setIs_sync(boolean is_sync) {
+		this.is_sync = is_sync;
 	}
 
 	@Override

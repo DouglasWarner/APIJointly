@@ -19,6 +19,7 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	@Autowired
 	private JdbcTemplate template;
 	
+	private String qryGetListFollows = "SELECT * FROM user_follow_user";
 	private String qryGetListFollowed = "SELECT * FROM user WHERE email in (SELECT user_follow FROM user_follow_user WHERE user=?)";
 	private String qryGetListFollowers = "SELECT * FROM user WHERE email in (SELECT user FROM user_follow_user WHERE user_follow=?)";
 	private String qryGetCountFollowed = "SELECT COUNT(*) FROM user_follow_user WHERE user=?";
@@ -70,12 +71,17 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 					@Override
 					public UserFollowUser mapRow(ResultSet rs, int rowNumber) throws SQLException {
 						UserFollowUser followUser = new UserFollowUser();
-						followUser.setIdUser(rs.getString(1));
-						followUser.setIdUserFollowed(rs.getString(2));
+						followUser.setUser(rs.getString(1));
+						followUser.setUserFollow(rs.getString(2));
 						
 						return followUser;
 					}
 			
 				} , userEmail, userFollowEmail);
+	}
+
+	@Override
+	public List<Map<String, Object>> getListFollows() {
+		return template.queryForList(qryGetListFollows);
 	}
 }

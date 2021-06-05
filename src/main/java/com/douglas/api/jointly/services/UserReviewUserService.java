@@ -23,8 +23,8 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	}
 
 	@Override
-	public int insert(String userEmail, String userReviewEmail, String review, int stars) {
-		return userReviewUserDAO.insert(userEmail, userReviewEmail, review, stars);
+	public int insert(String userEmail, String userReviewEmail, String date, String review, int stars) {
+		return userReviewUserDAO.insert(userEmail, userReviewEmail, date, review, stars);
 	}
 
 	@Override
@@ -35,6 +35,11 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	@Override
 	public UserReviewUser getReview(String userEmail, String userReviewEmail) {
 		return userReviewUserDAO.getReview(userEmail, userReviewEmail);
+	}
+
+	@Override
+	public List<Map<String, Object>> getListReviews() {
+		return userReviewUserDAO.getListReviews();
 	}
 	
 }

@@ -19,6 +19,8 @@ public class UserReviewUser implements Serializable {
 	private String date;
     private String review;
     private int stars;
+    private boolean is_deleted;
+    private boolean is_sync;
     
     public UserReviewUser() {
 	}
@@ -32,28 +34,28 @@ public class UserReviewUser implements Serializable {
 		this.stars = stars;
 	}
 
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getUserReview() {
+		return userReview;
+	}
+
+	public void setUserReview(String userReview) {
+		this.userReview = userReview;
+	}
+
 	public String getDate() {
 		return date;
 	}
 
 	public void setDate(String date) {
 		this.date = date;
-	}
-
-	public String getIdUser() {
-		return user;
-	}
-
-	public void setIdUser(String idUser) {
-		this.user = idUser;
-	}
-
-	public String getIdUserReview() {
-		return userReview;
-	}
-
-	public void setIdUserReview(String idUserReview) {
-		this.userReview = idUserReview;
 	}
 
 	public String getReview() {
@@ -70,6 +72,22 @@ public class UserReviewUser implements Serializable {
 
 	public void setStars(int stars) {
 		this.stars = stars;
+	}
+
+	public boolean isIs_deleted() {
+		return is_deleted;
+	}
+
+	public void setIs_deleted(boolean is_deleted) {
+		this.is_deleted = is_deleted;
+	}
+
+	public boolean isIs_sync() {
+		return is_sync;
+	}
+
+	public void setIs_sync(boolean is_sync) {
+		this.is_sync = is_sync;
 	}
 
 	@Override

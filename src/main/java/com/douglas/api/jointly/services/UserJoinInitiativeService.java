@@ -27,8 +27,8 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	}
 
 	@Override
-	public long insert(long idInitiative, String userEmail, int type) {
-		return userJoinInitiativeDAO.insert(idInitiative, userEmail, type);
+	public long insert(long idInitiative, String userEmail, int type, String date) {
+		return userJoinInitiativeDAO.insert(idInitiative, userEmail, type, date);
 	}
 
 	@Override
@@ -42,8 +42,8 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	}
 
 	@Override
-	public List<Map<String, Object>> getInitiativeJoinedByUser(String userEmail, int type) {
-		return userJoinInitiativeDAO.getInitiativeJoinedByUser(userEmail, type);
+	public List<Map<String, Object>> getListInitiativeJoinedByUser(String userEmail, int type) {
+		return userJoinInitiativeDAO.getListInitiativeJoinedByUser(userEmail, type);
 	}
 
 	@Override

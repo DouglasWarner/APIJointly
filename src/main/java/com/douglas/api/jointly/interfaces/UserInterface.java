@@ -10,10 +10,10 @@ public interface UserInterface {
 	public User getUser(String email);
 	public int insert(String email, String password, String name, 
 						String phone, byte[] imagen, String location, 
-						String description);
+						String description, String created_at);
 	public int update(String email, String password, String name, 
 			String phone, byte[] imagen, String location, 
 			String description, int id);
 	public int delete(int idUser);
-	public List<Map<String, Object>> getInitiativeCreatedByUser(String email);
+	public List<Map<String, Object>> getListInitiativeCreatedByUser(String email);
 }

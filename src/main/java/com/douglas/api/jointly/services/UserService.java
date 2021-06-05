@@ -30,8 +30,8 @@ public class UserService implements UserInterface {
 
 	@Override
 	public int insert(String email, String password, String name, String phone, byte[] imagen, String location,
-			String description) {
-		return userDao.insert(email, password, name, phone, imagen, location, description);
+			String description, String created_at) {
+		return userDao.insert(email, password, name, phone, imagen, location, description, created_at);
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class UserService implements UserInterface {
 	}
 
 	@Override
-	public List<Map<String, Object>> getInitiativeCreatedByUser(String email) {
-		List<Map<String, Object>> list = userDao.getInitiativeCreatedByUser(email);
+	public List<Map<String, Object>> getListInitiativeCreatedByUser(String email) {
+		List<Map<String, Object>> list = userDao.getListInitiativeCreatedByUser(email);
 		return list;
 	} 
 }

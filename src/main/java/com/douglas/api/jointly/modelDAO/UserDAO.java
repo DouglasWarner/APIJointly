@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.douglas.api.jointly.Utils;
 import com.douglas.api.jointly.interfaces.UserInterface;
 import com.douglas.api.jointly.model.User;
 
@@ -19,11 +20,11 @@ public class UserDAO implements UserInterface {
 	
 	private String qryGetList = "SELECT * FROM user";
 	private String qryGetUser = "SELECT * FROM user WHERE email=?";
-	private String qryInsert = "INSERT INTO user (email, password, name, phone, imagen, location, description) "
-												+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	private String qryInsert = "INSERT INTO user (email, password, name, phone, imagen, location, description, created_at) "
+												+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	private String qryUpdate = "UPDATE user SET email=?, password=?, name=?, phone=?, imagen=?, location=?, description=? WHERE id=?";
 	private String qryDelete = "DELETE FROM user WHERE id=?";
-	private String qryGetInitiativeCreated = "SELECT * FROM initiative WHERE created_by=?";
+	private String qryGetListInitiativeCreatedByUser = "SELECT * FROM initiative WHERE created_by=?";
 	
 	@Override
 	public List<Map<String, Object>> getList() {
@@ -33,14 +34,17 @@ public class UserDAO implements UserInterface {
 
 	@Override
 	public User getUser(String email) {
-		return template.queryForObject(qryGetUser, new BeanPropertyRowMapper<User>(User.class), email);
+		User u = template.queryForObject(qryGetUser, new BeanPropertyRowMapper<User>(User.class), email);
+		u.setCreatedAt(Utils.getFormatStringDate(u.getCreatedAt()));
+		
+		return u;
 	}
 	
 	@Override
 	public int insert(String email, String password, String name, String phone, byte[] imagen, String location,
-			String description) {
+			String description, String created_at) {
 		return template.update(qryInsert,
-				email, password, name, phone, imagen, location, description);
+				email, password, name, phone, imagen, location, description, created_at);
 	}
 
 	@Override
@@ -56,8 +60,8 @@ public class UserDAO implements UserInterface {
 	}
 
 	@Override
-	public List<Map<String, Object>> getInitiativeCreatedByUser(String email) {
-		List<Map<String, Object>> lista = template.queryForList(qryGetInitiativeCreated, email);
+	public List<Map<String, Object>> getListInitiativeCreatedByUser(String email) {
+		List<Map<String, Object>> lista = template.queryForList(qryGetListInitiativeCreatedByUser, email);
 		return lista;
 	}
 

@@ -51,4 +51,9 @@ public class UserFollowUserService implements UserFollowUserInterface{
 		return UserFollowUserDAO.getUserFollowUser(userEmail, userFollowEmail);
 	}
 
+	@Override
+	public List<Map<String, Object>> getListFollows() {
+		return UserFollowUserDAO.getListFollows();
+	}
+
 }

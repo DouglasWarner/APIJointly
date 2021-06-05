@@ -16,6 +16,8 @@ public class UserFollowUser implements Serializable {
 	private String user;
 	@Id
     private String userFollow;
+	private boolean is_deleted;
+	private boolean is_sync;
     
     public UserFollowUser() {
 	}
@@ -26,20 +28,36 @@ public class UserFollowUser implements Serializable {
 		this.userFollow = idUserFollowed;
 	}
 
-	public String getIdUser() {
+	public String getUser() {
 		return user;
 	}
 
-	public void setIdUser(String idUser) {
-		this.user = idUser;
+	public void setUser(String user) {
+		this.user = user;
 	}
 
-	public String getIdUserFollowed() {
+	public String getUserFollow() {
 		return userFollow;
 	}
 
-	public void setIdUserFollowed(String idUserFollowed) {
-		this.userFollow = idUserFollowed;
+	public void setUserFollow(String userFollow) {
+		this.userFollow = userFollow;
+	}
+
+	public boolean isIs_deleted() {
+		return is_deleted;
+	}
+
+	public void setIs_deleted(boolean is_deleted) {
+		this.is_deleted = is_deleted;
+	}
+
+	public boolean isIs_sync() {
+		return is_sync;
+	}
+
+	public void setIs_sync(boolean is_sync) {
+		this.is_sync = is_sync;
 	}
 
 	@Override

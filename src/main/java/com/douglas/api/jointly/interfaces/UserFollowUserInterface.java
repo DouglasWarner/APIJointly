@@ -6,6 +6,7 @@ import java.util.Map;
 import com.douglas.api.jointly.model.UserFollowUser;
 
 public interface UserFollowUserInterface {
+	public List<Map<String, Object>> getListFollows();
 	public List<Map<String, Object>> getListFollowed(String userEmail);
 	public List<Map<String, Object>> getListFollowers(String userEmail);
 	public int getCountFollowed(String userEmail);

@@ -1,6 +1,7 @@
 package com.douglas.api.jointly.controler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,12 +45,22 @@ public class APIControler {
 	@Autowired
 	private UserReviewUserService reviewUserService;
 	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public APIResponse simpleCall() {
+		logger.info("Simple call to try connection");
+		
+		return new APIResponse(false, "OK", null);
+	}
+	
 	@RequestMapping(value = "/initiatives", method = RequestMethod.GET)
 	public APIResponse getListInitiative()
 	{
 		logger.info("Get list initiative");
 
 		List<Map<String, Object>> list = initiativeService.getList();
+
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
+		list.forEach(x -> x.replace("target_date", ((LocalDateTime)x.get("target_date")).format(Utils.FORMAT2)));
 		
 		return new APIResponse(false, "OK", list);
 	}
@@ -58,7 +69,10 @@ public class APIControler {
 	public APIResponse getListByName(@RequestParam("name") String name)
 	{
 		logger.info(String.format("Get list initiative by name [%s]", name));
-		List<Map<String, Object>> list = initiativeService.getListByName(name);
+		List<Map<String, Object>> list = initiativeService.getListByName(name);		
+
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
+		list.forEach(x -> x.replace("target_date", ((LocalDateTime)x.get("target_date")).format(Utils.FORMAT2)));
 
 		return new APIResponse(false, "OK", list);
 	}
@@ -83,17 +97,17 @@ public class APIControler {
 	}
 	
 	@RequestMapping(value = "/initiatives/initiative", method = RequestMethod.POST)
-	public APIResponse insertInitiative(@RequestParam("name") String name, @RequestParam("targetDate") String targetDate,
-									@RequestParam("description") Optional<String> description, @RequestParam("targetArea") String targetArea,
+	public APIResponse insertInitiative(@RequestParam("name") String name, @RequestParam("created_at") String createdAt, @RequestParam("target_date") String targetDate,
+									@RequestParam("description") Optional<String> description, @RequestParam("target_area") String targetArea,
 									@RequestParam("location") String location, @RequestParam("imagen") Optional<byte[]> imagen,
-									@RequestParam("targetAmount") int targetAmount, @RequestParam("createdBy") String createdBy)
+									@RequestParam("target_amount") int targetAmount, @RequestParam("created_by") String createdBy)
 	{
 		logger.info(String.format("insert initiative [%s]", name));
 		Initiative initiative = new Initiative();
 		long result = 0;
 		
 		try {
-			result = initiativeService.insert(name, targetDate, description.orElse(""), 
+			result = initiativeService.insert(name, createdAt, targetDate, description.orElse(""), 
 								targetArea, location, imagen.orElse(null), 
 								targetAmount, "A", createdBy, String.valueOf(new Random().nextInt()));
 			
@@ -110,6 +124,7 @@ public class APIControler {
 			return new APIResponse(false, "OK", initiativeService.getInitiativeById(initiative.getId()));	
 		}
 	}
+	
 	
 	@RequestMapping(value = "/initiatives/initiative", method = RequestMethod.PUT)
 	public APIResponse updateInitiative(@RequestParam("name") String name, @RequestParam("targetDate") String targetDate,
@@ -157,12 +172,27 @@ public class APIControler {
 			return new APIResponse(false, "OK", null); 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/initiatives/usersJoined", method = RequestMethod.GET)
 	public APIResponse getUsersJoined()
 	{
 		logger.info(String.format("get list usersJoined"));
 	
 		List<Map<String, Object>> list = joinInitiativeService.getUsersJoined();
+		
+		for (Map<String, Object> map : list) {
+			if(map.containsKey("type"))
+			{
+				Boolean b = (Boolean) map.get("type");
+				
+				if(map.get("type").equals(true))
+					map.replace("type", "1");
+				else
+					map.replace("type", "0");
+			}
+		}		
+
+		list.forEach(x -> x.replace("date", ((LocalDateTime)x.get("date")).format(Utils.FORMAT2)));
 		
 		return new APIResponse(false, "OK", list);
 	}
@@ -173,6 +203,8 @@ public class APIControler {
 		logger.info(String.format("get list usersJoined [%d]", idInitiative));
 		
 		List<Map<String, Object>> list = joinInitiativeService.getUsersJoinedByInitiative(idInitiative);
+
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
 		
 		if(list.size() > 0) {
 			return new APIResponse(false, "OK", list);
@@ -187,7 +219,7 @@ public class APIControler {
 	{
 		logger.info(String.format("insert userJoined [%d | %s]", idInitiative, userEmail));
 		long result = 0;
-		UserJoinInitiative joinInitiative = new UserJoinInitiative(idInitiative, userEmail, date, type);
+		UserJoinInitiative joinInitiative = new UserJoinInitiative(idInitiative, userEmail, Utils.getFormatStringDate(date), type);
 		Initiative initiative = null;
 		
 		try {
@@ -198,7 +230,7 @@ public class APIControler {
 		}
 		
 		try {
-			result = joinInitiativeService.insert(idInitiative, userEmail, type);
+			result = joinInitiativeService.insert(idInitiative, userEmail, type, date);
 		} catch (Exception e) {
 			String message = String.format("ERR : %s - [user=%s; initiative=%d]", e.getCause(), userEmail, idInitiative);
 			logger.error(message);
@@ -267,6 +299,8 @@ public class APIControler {
 	{
 		logger.info("Get list user");
 		List<Map<String, Object>> list = userService.getList();
+
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
 		
 		return new APIResponse(false, "OK", list);
 	}
@@ -298,18 +332,17 @@ public class APIControler {
 	public APIResponse insertUser(@RequestParam("email") String email, @RequestParam("password") String password,
 						@RequestParam("name") String name, @RequestParam("phone") Optional<String> phone,
 						@RequestParam("imagen") Optional<byte[]> imagen, @RequestParam("location") Optional<String> location,
-						@RequestParam("description") Optional<String> description)
+						@RequestParam("description") Optional<String> description, @RequestParam("created_at") String created_at)
 	{
 		logger.info(String.format("insert user %s", email));
 		int result = 0;
-		User user = new User(email, password, name, phone.orElse(""), imagen.orElse(null), location.orElse(""), description.orElse(""), "");
+		User user = new User(email, password, name, phone.orElse(""), imagen.orElse(null), location.orElse(""), description.orElse(""), created_at);
 		
 		try {
 			result = userService.insert(email, password, name, 
 								phone.orElse(""), imagen.orElse(null), location.orElse(""),
-								description.orElse(""));
+								description.orElse(""), created_at);
 			user.setId(result);
-			user.setCreatedAt(LocalDateTime.now().toString());
 		} catch (Exception e) {
 			String message = String.format("ERR : %s - [userEmail=%s]", e.getCause(), email);
 			logger.error(message);
@@ -368,22 +401,38 @@ public class APIControler {
 	}
 	
 	@RequestMapping(value = "/users/initiatives/created", method = RequestMethod.GET)
-	public APIResponse initiativesCreatedByUser(@RequestParam("email") String email)
+	public APIResponse getInitiativesCreatedByUser(@RequestParam("email") String email)
 	{
 		logger.info(String.format("get initiative created by user [%s]", email));
 		
-		List<Map<String, Object>> list = userService.getInitiativeCreatedByUser(email);
+		List<Map<String, Object>> list = userService.getListInitiativeCreatedByUser(email);
+		
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
+		list.forEach(x -> x.replace("target_date", ((LocalDateTime)x.get("target_date")).format(Utils.FORMAT2)));
 		
 		return new APIResponse(false, "OK", list);
 	}
 	
 	@RequestMapping(value = "/users/initiatives/joined", method = RequestMethod.GET)
-	public APIResponse initiativesJoinedByUser(@RequestParam("email") String email, @RequestParam("type") Optional<Integer> type)
+	public APIResponse getInitiativesJoinedByUser(@RequestParam("email") String email, @RequestParam("type") Optional<Integer> type)
 	{
 		logger.info(String.format("get initiative joined by user [%s]", email));
 		
-		List<Map<String, Object>> list = joinInitiativeService.getInitiativeJoinedByUser(email, type.orElse(Utils.join));
+		List<Map<String, Object>> list = joinInitiativeService.getListInitiativeJoinedByUser(email, type.orElse(Utils.JOIN));
+
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
+		list.forEach(x -> x.replace("target_date", ((LocalDateTime)x.get("target_date")).format(Utils.FORMAT2)));
 		
+		return new APIResponse(false, "OK", list);
+	}
+	
+	@RequestMapping(value = "/users/follows", method = RequestMethod.GET)
+	public APIResponse getListFollows() 
+	{
+		logger.info(String.format("get list follows"));
+		
+		List<Map<String, Object>> list = followUserService.getListFollows();
+
 		return new APIResponse(false, "OK", list);
 	}
 	
@@ -394,6 +443,8 @@ public class APIControler {
 		
 		List<Map<String, Object>> list = followUserService.getListFollowed(email);
 
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
+
 		return new APIResponse(false, "OK", list);
 	}
 	
@@ -403,6 +454,8 @@ public class APIControler {
 		logger.info(String.format("get followers by user [%s]", email));
 		
 		List<Map<String, Object>> list = followUserService.getListFollowers(email);
+		
+		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
 		
 		return new APIResponse(false, "OK", list);
 	}
@@ -454,12 +507,22 @@ public class APIControler {
 	}
 	
 	@RequestMapping(value = "/users/reviews", method = RequestMethod.GET)
-	public APIResponse getReviews(@RequestParam("email") String email)
+	public APIResponse getReviews(@RequestParam("email") Optional<String> email)
 	{
-		logger.info(String.format("get reviews of user [%s]", email));
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		
-		List<Map<String, Object>> list = reviewUserService.getList(email);
+		if(!email.isPresent()) {
+			logger.info(String.format("get list review"));
 		
+			list = reviewUserService.getListReviews();
+		} else {
+			logger.info(String.format("get reviews of user [%s]", email));
+		
+			list = reviewUserService.getList(email.get());
+		}
+				
+		list.forEach(x -> x.replace("date", ((LocalDateTime)x.get("date")).format(Utils.FORMAT2)));
+
 		return new APIResponse(false, "OK", list);
 	}
 	
@@ -473,7 +536,7 @@ public class APIControler {
 		UserReviewUser reviewUser = new UserReviewUser(userEmail, userReviewEmail, date, review.orElse(""), stars);
 		
 		try {
-			result = reviewUserService.insert(userEmail, userReviewEmail, review.orElse(""), stars);
+			result = reviewUserService.insert(userEmail, userReviewEmail, date, review.orElse(""), stars);
 		} catch (Exception e) {
 			String message = String.format("ERR : %s - [userEmail=%s; userReviewEmail=%s]", e.getCause(), userEmail, userReviewEmail);
 			logger.error(message);

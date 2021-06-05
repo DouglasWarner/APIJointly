@@ -18,8 +18,8 @@ public class User {
     private String location;
     private String description;
     private String createdAt;
-
-    //private int userFollows;
+    private boolean is_deleted;
+    private boolean is_sync;
     
     public User() {
 	}
@@ -37,8 +37,6 @@ public class User {
 		this.description = description;
 		this.createdAt = createdAt;
 	}
-	
-	
 
 	public User(String email, String password, String name, String phone, byte[] imagen, String location,
 			String description, String createdAt) {
@@ -123,6 +121,22 @@ public class User {
 
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public boolean isIs_deleted() {
+		return is_deleted;
+	}
+
+	public void setIs_deleted(boolean is_deleted) {
+		this.is_deleted = is_deleted;
+	}
+
+	public boolean isIs_sync() {
+		return is_sync;
+	}
+
+	public void setIs_sync(boolean is_sync) {
+		this.is_sync = is_sync;
 	}
 
 	@Override

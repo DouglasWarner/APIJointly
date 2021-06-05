@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.douglas.api.jointly.Utils;
 import com.douglas.api.jointly.interfaces.UserReviewUserInterface;
 import com.douglas.api.jointly.model.UserReviewUser;
 
@@ -19,8 +20,9 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	@Autowired
 	private JdbcTemplate template;
 	
+	private String qryGetListReview = "SELECT * FROM user_review_user";
 	private String qryGetList = "SELECT * FROM user_review_user WHERE user_review=?";
-	private String qryInsert = "INSERT INTO user_review_user (user, user_review, review, stars) VALUES (?,?,?,?)";
+	private String qryInsert = "INSERT INTO user_review_user (user, user_review, date, review, stars) VALUES (?,?,?,?,?)";
 	private String qryDelete = "DELETE FROM user_review_user WHERE user=? AND user_review=?";
 	private String qryGetReview = "SELECT * FROM user_review_user WHERE user=? AND user_review=?";
 
@@ -31,9 +33,9 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	}
 
 	@Override
-	public int insert(String userEmail, String userReviewEmail, String review, int stars) {
+	public int insert(String userEmail, String userReviewEmail, String date, String review, int stars) {
 		return template.update(qryInsert,
-				userEmail, userReviewEmail, review, stars);
+				userEmail, userReviewEmail, date, review, stars);
 	}
 
 	@Override
@@ -48,9 +50,9 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 			@Override
 			public UserReviewUser mapRow(ResultSet rs, int rowNumber) throws SQLException {
 				UserReviewUser reviewUser = new UserReviewUser();
-				reviewUser.setIdUser(rs.getString(1));
-				reviewUser.setIdUserReview(rs.getString(2));
-				reviewUser.setDate(rs.getString(3));
+				reviewUser.setUser(rs.getString(1));
+				reviewUser.setUserReview(rs.getString(2));
+				reviewUser.setDate(Utils.getFormatStringDate(rs.getString(3)));
 				reviewUser.setReview(rs.getString(4));
 				reviewUser.setStars(rs.getInt(5));
 				
@@ -58,6 +60,11 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 			}
 			
 		}, userEmail, userReviewEmail);
+	}
+
+	@Override
+	public List<Map<String, Object>> getListReviews() {
+		return template.queryForList(qryGetListReview);
 	}
 
 	

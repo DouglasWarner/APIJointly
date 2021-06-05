@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.douglas.api.jointly.Utils;
 import com.douglas.api.jointly.interfaces.InitiativeInterface;
 import com.douglas.api.jointly.model.Initiative;
 
@@ -25,24 +26,25 @@ public class InitiativeDAO implements InitiativeInterface {
 	private String qryGetList = "SELECT * FROM initiative";
 	private String qryGetListByName = "SELECT * FROM initiative WHERE name=?";
 	private String qryGetInitiative = "SELECT * FROM initiative WHERE id=?";
-	private String qryInsertInitiative = "INSERT INTO initiative (name, target_date, description, target_area, location, imagen, target_amount, status, created_by, ref_code) "
-														+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String qryInsertInitiative = "INSERT INTO initiative (name, created_at, target_date, description, target_area, location, imagen, target_amount, status, created_by, ref_code) "
+														+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String qryUpdateInitiative = "UPDATE initiative SET name=?, target_date=?, description=?, location=?, imagen=?, target_amount=?, status=? where id=?";
 	private String qryDelete = "DELETE FROM initiative WHERE id=?";
 	
 	private int[] getListParamsInsert() {
-		int[] list = new int[10];
+		int[] list = new int[11];
 		
 		list[0]= Types.VARCHAR;
 		list[1]= Types.VARCHAR;
 		list[2]= Types.VARCHAR;
 		list[3]= Types.VARCHAR;
 		list[4]= Types.VARCHAR;
-		list[5]= Types.BLOB;
-		list[6]= Types.INTEGER;
-		list[7]= Types.VARCHAR;
+		list[5]= Types.VARCHAR;
+		list[6]= Types.BLOB;
+		list[7]= Types.INTEGER;
 		list[8]= Types.VARCHAR;
 		list[9]= Types.VARCHAR;
+		list[10]= Types.VARCHAR;
 		
 		return list;
 	}
@@ -62,11 +64,15 @@ public class InitiativeDAO implements InitiativeInterface {
 	@Override
 	public Initiative getInitiativeById(long id) {
 		Initiative initiative = template.queryForObject(qryGetInitiative, new BeanPropertyRowMapper<Initiative>(Initiative.class), id);
+		
+		initiative.setCreatedAt(Utils.getFormatStringDate(initiative.getCreatedAt()));
+		initiative.setTargetDate(Utils.getFormatStringDate(initiative.getTargetDate()));
+		
 		return initiative;
 	}
 
 	@Override
-	public long insert(String name, String targetDate,
+	public long insert(String name, String createdAt, String targetDate,
 							String description, String targetArea,
 							String location, byte[] imagen,
 							int targetAmount, String status,
@@ -74,7 +80,7 @@ public class InitiativeDAO implements InitiativeInterface {
 		
 		PreparedStatementCreatorFactory creatorFactory = new PreparedStatementCreatorFactory(qryInsertInitiative, getListParamsInsert());
 		creatorFactory.setReturnGeneratedKeys(true);
-		PreparedStatementCreator creator = creatorFactory.newPreparedStatementCreator(new Object[] {name, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode});
+		PreparedStatementCreator creator = creatorFactory.newPreparedStatementCreator(new Object[] {name, createdAt, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode});
 		KeyHolder holder = new GeneratedKeyHolder();
 		
 		template.update(creator, holder);
