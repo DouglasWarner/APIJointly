@@ -14,4 +14,5 @@ public interface UserFollowUserInterface {
 	public int insert(String userEmail, String userFollowEmail);
 	public int delete(String userEmail, String userFollowEmail);
 	public UserFollowUser getUserFollowUser(String userEmail, String userFollowEmail);
+	
 }

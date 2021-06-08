@@ -4,36 +4,51 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class Initiative {
-	
+
+	@JsonProperty("id")
 	@Id
 	@GeneratedValue
 	private long id;
+	@JsonProperty("name")
     private String name;
+	@JsonProperty("created_at")
     private String createdAt;
+	@JsonProperty("target_date")
     private String targetDate;
+	@JsonProperty("description")
     private String description;
+	@JsonProperty("target_area")
     private String targetArea;
+	@JsonProperty("location")
     private String location;
+	@JsonProperty("imagen")
     private byte[] imagen;
+	@JsonProperty("target_amount")
     private int targetAmount;
+	@JsonProperty("status")
     private String status;
+	@JsonProperty("created_by")
     private String createdBy;
+	@JsonProperty("ref_code")
 	private String refCode;
+	@JsonProperty("is_deleted")
 	private boolean is_deleted;
+	@JsonProperty("is_sync")
 	private boolean is_sync;
-    
-    //private int countUserJoined;
     
     public Initiative() {
 	}
         
-    public Initiative(String name, String targetDate, String description,
-			String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy,
-			String refCode) {
+    public Initiative(String name, String createdAt, String targetDate, String description,
+    		String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy,
+    		String refCode) {
 		super();
 		this.name = name;
+		this.createdAt = createdAt;
 		this.targetDate = targetDate;
 		this.description = description;
 		this.targetArea = targetArea;

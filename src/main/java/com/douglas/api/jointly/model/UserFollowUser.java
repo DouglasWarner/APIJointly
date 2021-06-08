@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class UserFollowUser implements Serializable {
 	
@@ -12,20 +14,24 @@ public class UserFollowUser implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6546520414916730238L;
+	@JsonProperty("user")
 	@Id
 	private String user;
+	@JsonProperty("user_follow")
 	@Id
-    private String userFollow;
+    private String user_follow;
+	@JsonProperty("is_deleted")
 	private boolean is_deleted;
+	@JsonProperty("is_sync")
 	private boolean is_sync;
     
     public UserFollowUser() {
 	}
 
-	public UserFollowUser(String idUser, String idUserFollowed) {
+	public UserFollowUser(String user, String user_follow) {
 		super();
-		this.user = idUser;
-		this.userFollow = idUserFollowed;
+		this.user = user;
+		this.user_follow = user_follow;
 	}
 
 	public String getUser() {
@@ -36,12 +42,12 @@ public class UserFollowUser implements Serializable {
 		this.user = user;
 	}
 
-	public String getUserFollow() {
-		return userFollow;
+	public String getUser_follow() {
+		return user_follow;
 	}
 
-	public void setUserFollow(String userFollow) {
-		this.userFollow = userFollow;
+	public void setUser_follow(String user_follow) {
+		this.user_follow = user_follow;
 	}
 
 	public boolean isIs_deleted() {
@@ -65,7 +71,7 @@ public class UserFollowUser implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
-		result = prime * result + ((userFollow == null) ? 0 : userFollow.hashCode());
+		result = prime * result + ((user_follow == null) ? 0 : user_follow.hashCode());
 		return result;
 	}
 
@@ -83,10 +89,10 @@ public class UserFollowUser implements Serializable {
 				return false;
 		} else if (!user.equals(other.user))
 			return false;
-		if (userFollow == null) {
-			if (other.userFollow != null)
+		if (user_follow == null) {
+			if (other.user_follow != null)
 				return false;
-		} else if (!userFollow.equals(other.userFollow))
+		} else if (!user_follow.equals(other.user_follow))
 			return false;
 		return true;
 	}

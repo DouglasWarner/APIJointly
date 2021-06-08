@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class UserReviewUser implements Serializable {
 
@@ -12,14 +14,22 @@ public class UserReviewUser implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 6139906187554854544L;
+	
+	@JsonProperty("user")
 	@Id
 	private String user;
+	@JsonProperty("user_review")
 	@Id
     private String userReview;
+	@JsonProperty("date")
 	private String date;
+	@JsonProperty("review")
     private String review;
+	@JsonProperty("stars")
     private int stars;
+	@JsonProperty("is_deleted")
     private boolean is_deleted;
+	@JsonProperty("is_sync")
     private boolean is_sync;
     
     public UserReviewUser() {

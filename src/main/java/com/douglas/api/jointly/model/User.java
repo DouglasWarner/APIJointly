@@ -4,21 +4,34 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class User {
-	
+
+	@JsonProperty("id")
 	@Id
 	@GeneratedValue
 	private int id;
+	@JsonProperty("email")
     private String email;
+	@JsonProperty("password")
     private String password;
+	@JsonProperty("name")
     private String name;
+	@JsonProperty("phone")
     private String phone;
+	@JsonProperty("imagen")
     private byte[] imagen;
+	@JsonProperty("location")
     private String location;
+	@JsonProperty("description")
     private String description;
+	@JsonProperty("created_at")
     private String createdAt;
+	@JsonProperty("is_deleted")
     private boolean is_deleted;
+	@JsonProperty("is_sync")
     private boolean is_sync;
     
     public User() {

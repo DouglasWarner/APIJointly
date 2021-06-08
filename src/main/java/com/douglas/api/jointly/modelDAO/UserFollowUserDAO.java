@@ -1,7 +1,5 @@
 package com.douglas.api.jointly.modelDAO;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +18,18 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 	private JdbcTemplate template;
 	
 	private String qryGetListFollows = "SELECT * FROM user_follow_user";
-	private String qryGetListFollowed = "SELECT * FROM user WHERE email in (SELECT user_follow FROM user_follow_user WHERE user=?)";
+	private String qryGetListUserFollowed = "SELECT * FROM user WHERE email in (SELECT user_follow FROM user_follow_user WHERE user=?)";
+	private String qryGetListFollowed = "SELECT * FROM user_follow_user WHERE user in (SELECT email FROM user WHERE email=?)";
 	private String qryGetListFollowers = "SELECT * FROM user WHERE email in (SELECT user FROM user_follow_user WHERE user_follow=?)";
 	private String qryGetCountFollowed = "SELECT COUNT(*) FROM user_follow_user WHERE user=?";
 	private String qryGetCountFollowers = "SELECT COUNT(*) FROM user_follow_user WHERE user_follow=?";
-	private String qryInsert = "INSERT INTO user_follow_user VALUES (?,?)";
+	private String qryInsert = "INSERT INTO user_follow_user (user, user_follow) VALUES (?,?)";
 	private String qryDelete = "DELETE FROM user_follow_user WHERE user=? AND user_follow=?";
 	private String qryGetUserFollowUser = "SELECT * FROM user_follow_user WHERE user=? AND user_follow=?";
 	
 	@Override
 	public List<Map<String, Object>> getListFollowed(String email) {
-		List<Map<String, Object>> list = template.queryForList(qryGetListFollowed, email);
+		List<Map<String, Object>> list = template.queryForList(qryGetListUserFollowed, email);
 		return list;
 	}
 
@@ -65,19 +64,10 @@ public class UserFollowUserDAO implements UserFollowUserInterface {
 
 	@Override
 	public UserFollowUser getUserFollowUser(String userEmail, String userFollowEmail) {
-		return template.queryForObject(qryGetUserFollowUser, 
-				new BeanPropertyRowMapper<>(UserFollowUser.class, true) {
-			
-					@Override
-					public UserFollowUser mapRow(ResultSet rs, int rowNumber) throws SQLException {
-						UserFollowUser followUser = new UserFollowUser();
-						followUser.setUser(rs.getString(1));
-						followUser.setUserFollow(rs.getString(2));
-						
-						return followUser;
-					}
-			
-				} , userEmail, userFollowEmail);
+		UserFollowUser u = template.queryForObject(qryGetUserFollowUser, 
+				new BeanPropertyRowMapper<>(UserFollowUser.class), userEmail, userFollowEmail);
+		
+		return u;
 	}
 
 	@Override

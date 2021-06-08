@@ -6,8 +6,8 @@ import java.util.Map;
 import com.douglas.api.jointly.model.UserJoinInitiative;
 
 public interface UserJoinInitiativeInterface {
-	public List<Map<String, Object>> getUsersJoined();
-	public List<Map<String, Object>> getUsersJoinedByInitiative(long idInitiative);
+	public List<Map<String, Object>> getListUsersJoined();
+	public List<Map<String, Object>> getListUsersJoinedByInitiative(long idInitiative);
 	public long insert(long idInitiative, String userEmail, int type, String date);
 	public int update(long idInitiative, String userEmail, int type);
 	public int delete(long idInitiative, String userEmail);

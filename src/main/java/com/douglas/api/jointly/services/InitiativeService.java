@@ -32,8 +32,8 @@ public class InitiativeService implements InitiativeInterface {
 	}
 
 	@Override
-	public long insert(String name, String createdAt, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy, String refcode) {
-		return initiativeDAO.insert(name, createdAt, targetDate, description, targetArea, location, imagen, targetAmount, status, createdBy, refcode);
+	public long insert(Initiative initiative) {
+		return initiativeDAO.insert(initiative);
 	}
 
 	@Override
@@ -44,5 +44,15 @@ public class InitiativeService implements InitiativeInterface {
 	@Override
 	public int delete(long id) {
 		return initiativeDAO.delete(id);		
+	}
+
+	@Override
+	public Initiative getInitiativeToSync(long id, String createdBy) {
+		return initiativeDAO.getInitiativeToSync(id, createdBy);
+	}
+
+	@Override
+	public int updateSync(Initiative initiative) {
+		return initiativeDAO.updateSync(initiative);
 	}
 }

@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.douglas.api.jointly.Utils;
 import com.douglas.api.jointly.model.Initiative;
 import com.douglas.api.jointly.model.User;
+import com.douglas.api.jointly.model.UserFollowUser;
 import com.douglas.api.jointly.model.UserJoinInitiative;
 import com.douglas.api.jointly.model.UserReviewUser;
 import com.douglas.api.jointly.services.InitiativeService;
+import com.douglas.api.jointly.services.TargetAreaService;
 import com.douglas.api.jointly.services.UserFollowUserService;
 import com.douglas.api.jointly.services.UserJoinInitiativeService;
 import com.douglas.api.jointly.services.UserReviewUserService;
@@ -44,6 +47,8 @@ public class APIControler {
 	private UserFollowUserService followUserService;
 	@Autowired
 	private UserReviewUserService reviewUserService;
+	@Autowired
+	private TargetAreaService targetAreaService;
 	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public APIResponse simpleCall() {
@@ -100,16 +105,16 @@ public class APIControler {
 	public APIResponse insertInitiative(@RequestParam("name") String name, @RequestParam("created_at") String createdAt, @RequestParam("target_date") String targetDate,
 									@RequestParam("description") Optional<String> description, @RequestParam("target_area") String targetArea,
 									@RequestParam("location") String location, @RequestParam("imagen") Optional<byte[]> imagen,
-									@RequestParam("target_amount") int targetAmount, @RequestParam("created_by") String createdBy)
+									@RequestParam("target_amount") int targetAmount, @RequestParam("created_by") String createdBy, @RequestParam("ref_code") String ref_code)
 	{
 		logger.info(String.format("insert initiative [%s]", name));
-		Initiative initiative = new Initiative();
+		Initiative initiative = new Initiative(name, createdAt, targetDate, description.orElse(""), 
+											targetArea, location, imagen.orElse(null), 
+											targetAmount, "A", createdBy, ref_code);
 		long result = 0;
 		
 		try {
-			result = initiativeService.insert(name, createdAt, targetDate, description.orElse(""), 
-								targetArea, location, imagen.orElse(null), 
-								targetAmount, "A", createdBy, String.valueOf(new Random().nextInt()));
+			result = initiativeService.insert(initiative);
 			
 			initiative.setId(result);
 		} catch (Exception e) {
@@ -172,21 +177,18 @@ public class APIControler {
 			return new APIResponse(false, "OK", null); 
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/initiatives/usersJoined", method = RequestMethod.GET)
 	public APIResponse getUsersJoined()
 	{
 		logger.info(String.format("get list usersJoined"));
 	
-		List<Map<String, Object>> list = joinInitiativeService.getUsersJoined();
+		List<Map<String, Object>> list = joinInitiativeService.getListUsersJoined();
 		
 		for (Map<String, Object> map : list) {
 			if(map.containsKey("type"))
 			{
-				Boolean b = (Boolean) map.get("type");
-				
 				if(map.get("type").equals(true))
-					map.replace("type", "1");
+					map.replace("type", (boolean) (map.get("type")) ? "1" : "0");
 				else
 					map.replace("type", "0");
 			}
@@ -201,16 +203,18 @@ public class APIControler {
 	public APIResponse getUsersJoinedByInitiative(@RequestParam("idInitiative") long idInitiative)
 	{
 		logger.info(String.format("get list usersJoined [%d]", idInitiative));
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		
-		List<Map<String, Object>> list = joinInitiativeService.getUsersJoinedByInitiative(idInitiative);
+		try {
+			list = joinInitiativeService.getListUsersJoinedByInitiative(idInitiative);
 
-		list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
-		
-		if(list.size() > 0) {
-			return new APIResponse(false, "OK", list);
-		} else {
-			return new APIResponse(true, "ERR : Doesn't exists users joined for initiative ["+idInitiative+"]", null);	
+			list.forEach(x -> x.replace("created_at", ((LocalDateTime)x.get("created_at")).format(Utils.FORMAT2)));
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return new APIResponse(true, "ERR - " + e.getMessage(), null);
 		}
+		
+		return new APIResponse(false, "OK", list);
 	}
 	
 	@RequestMapping(value = "/initiatives/usersJoined", method = RequestMethod.POST)
@@ -220,10 +224,9 @@ public class APIControler {
 		logger.info(String.format("insert userJoined [%d | %s]", idInitiative, userEmail));
 		long result = 0;
 		UserJoinInitiative joinInitiative = new UserJoinInitiative(idInitiative, userEmail, Utils.getFormatStringDate(date), type);
-		Initiative initiative = null;
-		
+				
 		try {
-			initiative = initiativeService.getInitiativeById(idInitiative);
+			initiativeService.getInitiativeById(idInitiative);
 		} catch (Exception e) {
 			logger.error("ERR : Initiative doesn't exists");
 			return new APIResponse(true, "ERR : Initiative doesn't exists", null);
@@ -311,7 +314,6 @@ public class APIControler {
 		logger.info(String.format("Get user by email [%s]", email));
 		User user = null;
 		String messageErrorEmptyResult = String.format("ERR : No user found for email [%s]", email);
-		String messageErrorDuplicateEntry = String.format("ERR : User already exists");
 		
 		try {
 			user = userService.getUser(email);
@@ -319,9 +321,6 @@ public class APIControler {
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(messageErrorEmptyResult);
 			return new APIResponse(true, messageErrorEmptyResult, null);
-		} catch (DuplicateKeyException e) {
-			logger.info(messageErrorDuplicateEntry);
-			return new APIResponse(true, messageErrorDuplicateEntry, null);
 		} catch (Exception e) {
 			return new APIResponse(true, "ERR : " + e.getCause(), null);
 		}
@@ -337,12 +336,16 @@ public class APIControler {
 		logger.info(String.format("insert user %s", email));
 		int result = 0;
 		User user = new User(email, password, name, phone.orElse(""), imagen.orElse(null), location.orElse(""), description.orElse(""), created_at);
+		String messageErrorDuplicateEntry = String.format("ERR : User already exists");
 		
 		try {
 			result = userService.insert(email, password, name, 
 								phone.orElse(""), imagen.orElse(null), location.orElse(""),
 								description.orElse(""), created_at);
 			user.setId(result);
+		} catch (DuplicateKeyException e) {
+			logger.info(messageErrorDuplicateEntry);
+			return new APIResponse(true, messageErrorDuplicateEntry, null);
 		} catch (Exception e) {
 			String message = String.format("ERR : %s - [userEmail=%s]", e.getCause(), email);
 			logger.error(message);
@@ -479,10 +482,10 @@ public class APIControler {
 			return new APIResponse(true, String.format("ERR : Cannot insert follow followUserService userEmail [%s] | userFollowUser [%s]", userEmail, userFollowEmail), null);
 		else
 		{
-			try {
+			try {				
 				return new APIResponse(false, "OK", followUserService.getUserFollowUser(userEmail, userFollowEmail));
 			} catch (Exception e) {
-				return new APIResponse(true, "ERR : " + e.getCause(), null);
+				return new APIResponse(true, "ERR : " + e.getMessage(), null);
 			}
 		}
 	}
@@ -553,5 +556,81 @@ public class APIControler {
 				return new APIResponse(true, "ERR : " + e.getCause(), null);
 			}
 		}
+	}
+	
+	@RequestMapping(value = "/targetAreas", method = RequestMethod.GET)
+	public APIResponse getListTargetArea() {
+		logger.info("GET list target area");
+		
+		List<Map<String, Object>> list = targetAreaService.getList();
+
+		return new APIResponse(false, "OK", list);		
+	}
+	
+	@RequestMapping(value = "/countries", method = RequestMethod.GET)
+	public APIResponse getListCountries() {
+		logger.info("GET list countries");
+		
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		//TODO obtener countries de alguna API
+
+		return new APIResponse(false, "OK", list);
+	}
+	
+	@RequestMapping(value = "/initiatives/initiative/sync", method = RequestMethod.POST)
+	public APIResponse syncInitiative(@RequestBody Initiative... initiatives) {
+		
+		logger.info("Sync data initiatives");
+		
+		try {
+			for (Initiative initiative : initiatives) {
+				if(!initiative.isIs_sync()) {
+					
+					Initiative tmp = initiativeService.getInitiativeToSync(initiative.getId(), initiative.getCreatedBy());
+	
+					if(tmp != null) {	// si existe en la tabla
+						if(initiative.isIs_deleted()) {
+							initiativeService.delete(initiative.getId());	// lo elimina de la tabla
+						} else {
+							initiativeService.updateSync(tmp);	// lo actualiza
+						}
+					} else if (!initiative.isIs_deleted()) {			// si no existe en la tabla lo crea
+						initiative.setId(0);
+						long result = initiativeService.insert(initiative);
+						logger.info(result);
+					}	
+				}
+			}
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);	
+		}
+		
+		return new APIResponse(false, "OK", null);
+	}
+	
+	@RequestMapping(value = "/users/follows/sync", method = RequestMethod.POST)
+	public APIResponse syncUserFollow(@RequestBody UserFollowUser... followUsers) {
+		
+		logger.info("Sync data userFollows");
+		
+		try {
+			for (UserFollowUser followUser: followUsers) {
+				if(!followUser.isIs_sync()) {
+					
+					UserFollowUser tmp = followUserService.getUserFollowUser(followUser.getUser(), followUser.getUser_follow());
+	
+					if(tmp == null) {	// si no existe en la tabla lo crea
+						long result = followUserService.insert(followUser.getUser(), followUser.getUser_follow());
+						logger.info(result);
+					} else if(followUser.isIs_deleted()) {	// lo elimina de la tabla
+						followUserService.delete(followUser.getUser(), followUser.getUser_follow());
+					}					
+				} 
+			}
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);	
+		}
+		
+		return new APIResponse(false, "OK", null);
 	}
 }

@@ -30,13 +30,13 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 	private String qryGetUserJoinInitiative = "SELECT * FROM user_join_initiative WHERE id_initiative=? AND user_email=?";
 
 	@Override
-	public List<Map<String, Object>> getUsersJoined() {
+	public List<Map<String, Object>> getListUsersJoined() {
 		List<Map<String, Object>> list = template.queryForList(getUsersJoined);
 		return list;
 	}
 	
 	@Override
-	public List<Map<String, Object>> getUsersJoinedByInitiative(long idInitiative) {
+	public List<Map<String, Object>> getListUsersJoinedByInitiative(long idInitiative) {
 		List<Map<String, Object>> list = template.queryForList(getUsersJoinedByInitiative, idInitiative);
 		return list;
 	}

@@ -17,13 +17,13 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	private UserJoinInitiativeDAO userJoinInitiativeDAO;
 
 	@Override
-	public List<Map<String, Object>> getUsersJoined() {
-		return userJoinInitiativeDAO.getUsersJoined();
+	public List<Map<String, Object>> getListUsersJoined() {
+		return userJoinInitiativeDAO.getListUsersJoined();
 	}
 	
 	@Override
-	public List<Map<String, Object>> getUsersJoinedByInitiative(long idInitiative) {
-		return userJoinInitiativeDAO.getUsersJoinedByInitiative(idInitiative);
+	public List<Map<String, Object>> getListUsersJoinedByInitiative(long idInitiative) {
+		return userJoinInitiativeDAO.getListUsersJoinedByInitiative(idInitiative);
 	}
 
 	@Override

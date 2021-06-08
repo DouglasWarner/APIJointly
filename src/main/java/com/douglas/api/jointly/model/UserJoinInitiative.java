@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 public class UserJoinInitiative implements Serializable {
 	
@@ -12,13 +14,20 @@ public class UserJoinInitiative implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -4237903622543173184L;
+
+	@JsonProperty("id_initiative")
 	@Id
 	private long idInitiative;
+	@JsonProperty("user_email")
 	@Id
     private String userEmail;
+	@JsonProperty("date")
 	private String date;
+	@JsonProperty("type")
     private int type;
+	@JsonProperty("is_deleted")
     private boolean is_deleted;
+	@JsonProperty("is_sync")
     private boolean is_sync;
     
     public UserJoinInitiative() {
