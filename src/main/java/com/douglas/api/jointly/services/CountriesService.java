@@ -6,18 +6,18 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.douglas.api.jointly.interfaces.TargetAreaInterface;
-import com.douglas.api.jointly.modelDAO.TargetAreaDAO;
+import com.douglas.api.jointly.interfaces.CountriesInterface;
+import com.douglas.api.jointly.modelDAO.CountriesDAO;
 
 @Service
-public class TargetAreaService implements TargetAreaInterface {
+public class CountriesService implements CountriesInterface {
 
 	@Autowired
-	private TargetAreaDAO targetAreaDAO;
+	private CountriesDAO CountriesDAO;
 	
 	@Override
 	public List<Map<String, Object>> getList() {
-		return targetAreaDAO.getList();
+		return CountriesDAO.getList();
 	}
 
 }

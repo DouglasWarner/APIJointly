@@ -1,44 +1,45 @@
 package com.douglas.api.jointly.model;
 
 import java.io.Serializable;
-import java.util.GregorianCalendar;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-public class chat implements Serializable {
+public class Chat implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1012319594635181992L;
 	@Id
-	private GregorianCalendar date;
+	private String date;
 	@Id
 	private int idInitiative;
 	@Id
 	private String emailUser;
-	private String mensaje;
+	private String message;
+    private boolean read;
 	private boolean is_sync;
 	
-	public chat() {
+	public Chat() {
 	}
 
-	public chat(GregorianCalendar date, int idInitiative, String emailUser, String mensaje, boolean is_sync) {
+	public Chat(String date, int idInitiative, String emailUser, boolean read, String message, boolean is_sync) {
 		super();
 		this.date = date;
 		this.idInitiative = idInitiative;
 		this.emailUser = emailUser;
-		this.mensaje = mensaje;
+		this.message = message;
+		this.read = read;
 		this.is_sync = is_sync;
 	}
 
-	public GregorianCalendar getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(GregorianCalendar date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -58,12 +59,20 @@ public class chat implements Serializable {
 		this.emailUser = emailUser;
 	}
 
-	public String getMensaje() {
-		return mensaje;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public boolean isRead() {
+		return read;
+	}
+
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 
 	public boolean isIs_sync() {
@@ -92,7 +101,7 @@ public class chat implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		chat other = (chat) obj;
+		Chat other = (Chat) obj;
 		if (date == null) {
 			if (other.date != null)
 				return false;

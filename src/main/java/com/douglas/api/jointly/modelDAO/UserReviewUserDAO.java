@@ -1,7 +1,5 @@
 package com.douglas.api.jointly.modelDAO;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,18 +22,19 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	private String qryGetList = "SELECT * FROM user_review_user WHERE user_review=?";
 	private String qryInsert = "INSERT INTO user_review_user (user, user_review, date, review, stars) VALUES (?,?,?,?,?)";
 	private String qryDelete = "DELETE FROM user_review_user WHERE user=? AND user_review=?";
-	private String qryGetReview = "SELECT * FROM user_review_user WHERE user=? AND user_review=?";
+	private String qryGetReview = "SELECT * FROM user_review_user WHERE user=? AND user_review=? AND date=?";
 
 	@Override
-	public List<Map<String, Object>> getList(String userEmail) {
+	public List<Map<String, Object>> getListByUser(String userEmail) {
 		List<Map<String, Object>> list = template.queryForList(qryGetList, userEmail);
 		return list;
 	}
 
 	@Override
-	public int insert(String userEmail, String userReviewEmail, String date, String review, int stars) {
+	public int insert(UserReviewUser userReviewUser) {
 		return template.update(qryInsert,
-				userEmail, userReviewEmail, date, review, stars);
+				userReviewUser.getUser(), userReviewUser.getUserReview(), userReviewUser.getDate(), 
+				userReviewUser.getReview(), userReviewUser.getStars());
 	}
 
 	@Override
@@ -44,22 +43,12 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	}
 
 	@Override
-	public UserReviewUser getReview(String userEmail, String userReviewEmail) {
-		return template.queryForObject(qryGetReview, new BeanPropertyRowMapper<>(UserReviewUser.class, true) {
-
-			@Override
-			public UserReviewUser mapRow(ResultSet rs, int rowNumber) throws SQLException {
-				UserReviewUser reviewUser = new UserReviewUser();
-				reviewUser.setUser(rs.getString(1));
-				reviewUser.setUserReview(rs.getString(2));
-				reviewUser.setDate(Utils.getFormatStringDate(rs.getString(3)));
-				reviewUser.setReview(rs.getString(4));
-				reviewUser.setStars(rs.getInt(5));
-				
-				return reviewUser;
-			}
-			
-		}, userEmail, userReviewEmail);
+	public UserReviewUser getReview(String userEmail, String userReviewEmail, String date) {
+		UserReviewUser reviewUser = template.queryForObject(qryGetReview, new BeanPropertyRowMapper<UserReviewUser>(UserReviewUser.class), userEmail, userReviewEmail, date);
+		
+		reviewUser.setDate(Utils.getFormatStringDate(reviewUser.getDate()));
+		
+		return reviewUser;
 	}
 
 	@Override

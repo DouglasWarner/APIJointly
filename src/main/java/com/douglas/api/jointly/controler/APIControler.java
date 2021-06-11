@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.douglas.api.jointly.Utils;
+import com.douglas.api.jointly.model.Chat;
 import com.douglas.api.jointly.model.Initiative;
 import com.douglas.api.jointly.model.User;
 import com.douglas.api.jointly.model.UserFollowUser;
 import com.douglas.api.jointly.model.UserJoinInitiative;
 import com.douglas.api.jointly.model.UserReviewUser;
+import com.douglas.api.jointly.services.ChatService;
+import com.douglas.api.jointly.services.CountriesService;
 import com.douglas.api.jointly.services.InitiativeService;
 import com.douglas.api.jointly.services.TargetAreaService;
 import com.douglas.api.jointly.services.UserFollowUserService;
@@ -49,6 +51,10 @@ public class APIControler {
 	private UserReviewUserService reviewUserService;
 	@Autowired
 	private TargetAreaService targetAreaService;
+	@Autowired
+	private CountriesService countriesService;
+	@Autowired
+	private ChatService chatService;
 	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public APIResponse simpleCall() {
@@ -509,19 +515,25 @@ public class APIControler {
 			return new APIResponse(false, "OK", null);
 	}
 	
+	/**
+	 * Obtiene todos los review del sistema.
+	 * Si se le pasa un usuario, se obtiene los de ese usuario
+	 * @param email
+	 * @return
+	 */
 	@RequestMapping(value = "/users/reviews", method = RequestMethod.GET)
 	public APIResponse getReviews(@RequestParam("email") Optional<String> email)
 	{
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		
-		if(!email.isPresent()) {
+		if(email.isPresent()) {
+			logger.info(String.format("get reviews of user [%s]", email));
+		
+			list = reviewUserService.getListByUser(email.get());
+		} else {
 			logger.info(String.format("get list review"));
 		
 			list = reviewUserService.getListReviews();
-		} else {
-			logger.info(String.format("get reviews of user [%s]", email));
-		
-			list = reviewUserService.getList(email.get());
 		}
 				
 		list.forEach(x -> x.replace("date", ((LocalDateTime)x.get("date")).format(Utils.FORMAT2)));
@@ -530,28 +542,29 @@ public class APIControler {
 	}
 	
 	@RequestMapping(value = "/users/reviews", method = RequestMethod.POST)
-	public APIResponse insertReview(@RequestParam("date") String date, @RequestParam("userEmail") String userEmail, 
+	public APIResponse insertReview(@RequestBody UserReviewUser reviewUser, String date, @RequestParam("userEmail") String userEmail, 
 									@RequestParam("userReviewEmail") String userReviewEmail, @RequestParam("review") Optional<String> review, 
 									@RequestParam("stars") int stars)
 	{
 		logger.info(String.format("insert review on userReview by user [%s | %s | %s | %d]", userEmail, userReviewEmail, review, stars));
 		int result = 0;
-		UserReviewUser reviewUser = new UserReviewUser(userEmail, userReviewEmail, date, review.orElse(""), stars);
+		UserReviewUser userReviewUser = new UserReviewUser(reviewUser.getUser(), reviewUser.getUserReview(), reviewUser.getDate(),
+													reviewUser.getReview(), reviewUser.getStars());
 		
 		try {
-			result = reviewUserService.insert(userEmail, userReviewEmail, date, review.orElse(""), stars);
+			result = reviewUserService.insert(userReviewUser);
 		} catch (Exception e) {
 			String message = String.format("ERR : %s - [userEmail=%s; userReviewEmail=%s]", e.getCause(), userEmail, userReviewEmail);
 			logger.error(message);
-			return new APIResponse(true, message, reviewUser);
+			return new APIResponse(true, message, userReviewUser);
 		}
 		
 		if(result == 0)
-			return new APIResponse(true, String.format("ERR : Cannot insert review reviewUserService user [%s]", userReviewEmail), reviewUser);
+			return new APIResponse(true, String.format("ERR : Cannot insert review reviewUserService user [%s]", userReviewEmail), userReviewUser);
 		else
 		{
 			try {
-				return new APIResponse(false, "OK", reviewUserService.getReview(userEmail, userReviewEmail));
+				return new APIResponse(false, "OK", reviewUserService.getReview(userReviewUser.getUser(), userReviewUser.getUserReview(), userReviewUser.getDate()));
 			} catch (Exception e) {
 				return new APIResponse(true, "ERR : " + e.getCause(), null);
 			}
@@ -571,10 +584,45 @@ public class APIControler {
 	public APIResponse getListCountries() {
 		logger.info("GET list countries");
 		
-		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-		//TODO obtener countries de alguna API
+		List<Map<String, Object>> list = countriesService.getList();
 
 		return new APIResponse(false, "OK", list);
+	}
+	
+	@RequestMapping(value = "/chat", method = RequestMethod.GET)
+	public APIResponse getListChat() {
+		logger.info("GET list chat");
+		
+		List<Map<String, Object>> list = chatService.getList();
+
+		return new APIResponse(false, "OK", list);
+	}
+	
+	@RequestMapping(value = "/chat/initiative", method = RequestMethod.GET)
+	public APIResponse getListChat(@RequestParam("id_initiative") long id_initiative) {
+		logger.info("GET list chat by initiative");
+		
+		List<Map<String, Object>> list = chatService.getListByInitiative(id_initiative);
+
+		return new APIResponse(false, "OK", list);
+	}
+	
+	@RequestMapping(value = "/chat/initiative", method = RequestMethod.POST)
+	public APIResponse insertMessageChat(@RequestBody Chat chat) {
+		logger.info("INSERT chat message");
+		long result = 0;
+		
+		try {
+			result = chatService.insert(chat);
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);
+		}
+
+		try {
+			return new APIResponse(false, "OK", chatService.getChatMessage(chat.getIdInitiative(), chat.getDate(), chat.getEmailUser()));
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);
+		}
 	}
 	
 	@RequestMapping(value = "/initiatives/initiative/sync", method = RequestMethod.POST)

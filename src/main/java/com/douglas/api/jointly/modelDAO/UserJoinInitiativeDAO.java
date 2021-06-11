@@ -82,9 +82,4 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 					
 				}, idInitiative, userEmail);
 	}
-	
-	class RowMapper extends BeanPropertyRowMapper<UserJoinInitiative>
-	{
-		
-	}
 }

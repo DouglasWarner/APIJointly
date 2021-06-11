@@ -17,14 +17,14 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	private UserReviewUserDAO userReviewUserDAO;
 
 	@Override
-	public List<Map<String, Object>> getList(String userEmail) {
-		List<Map<String, Object>> list = userReviewUserDAO.getList(userEmail);
+	public List<Map<String, Object>> getListByUser(String userEmail) {
+		List<Map<String, Object>> list = userReviewUserDAO.getListByUser(userEmail);
 		return list;
 	}
 
 	@Override
-	public int insert(String userEmail, String userReviewEmail, String date, String review, int stars) {
-		return userReviewUserDAO.insert(userEmail, userReviewEmail, date, review, stars);
+	public int insert(UserReviewUser userReviewUser) {
+		return userReviewUserDAO.insert(userReviewUser);
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	}
 
 	@Override
-	public UserReviewUser getReview(String userEmail, String userReviewEmail) {
-		return userReviewUserDAO.getReview(userEmail, userReviewEmail);
+	public UserReviewUser getReview(String userEmail, String userReviewEmail, String date) {
+		return userReviewUserDAO.getReview(userEmail, userReviewEmail, date);
 	}
 
 	@Override
