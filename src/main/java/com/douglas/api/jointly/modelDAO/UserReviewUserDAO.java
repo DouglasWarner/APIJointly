@@ -21,7 +21,7 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	private String qryGetListReview = "SELECT * FROM user_review_user";
 	private String qryGetList = "SELECT * FROM user_review_user WHERE user_review=?";
 	private String qryInsert = "INSERT INTO user_review_user (user, user_review, date, review, stars) VALUES (?,?,?,?,?)";
-	private String qryDelete = "DELETE FROM user_review_user WHERE user=? AND user_review=?";
+	private String qryDelete = "DELETE FROM user_review_user WHERE user=? AND user_review=? AND date=?";
 	private String qryGetReview = "SELECT * FROM user_review_user WHERE user=? AND user_review=? AND date=?";
 
 	@Override
@@ -38,8 +38,8 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	}
 
 	@Override
-	public int delete(String userEmail, String userReviewEmail) {
-		return template.update(qryDelete, userEmail, userReviewEmail);
+	public int delete(String userEmail, String userReviewEmail, String date) {
+		return template.update(qryDelete, userEmail, userReviewEmail, date);
 	}
 
 	@Override
@@ -54,6 +54,12 @@ public class UserReviewUserDAO implements UserReviewUserInterface{
 	@Override
 	public List<Map<String, Object>> getListReviews() {
 		return template.queryForList(qryGetListReview);
+	}
+
+	@Override
+	public int updateSync(UserReviewUser reviewUser) {
+		//TODO not implemented
+		return 0;
 	}
 
 	

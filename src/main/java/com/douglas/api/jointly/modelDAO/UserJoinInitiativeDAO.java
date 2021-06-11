@@ -28,6 +28,7 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 	private String qryDelete = "DELETE FROM user_join_initiative WHERE id_initiative=? AND user_email=?";
 	private String qryListInitiativeJoinedByUser = "SELECT * FROM initiative WHERE id in (SELECT id_initiative FROM user_join_initiative WHERE user_email=? AND type=?)";
 	private String qryGetUserJoinInitiative = "SELECT * FROM user_join_initiative WHERE id_initiative=? AND user_email=?";
+	private String qryUpdateToSync = "UPDATE user_join_initiative SET type=?, is_sync=? WHERE id_initiative=? AND user_email=?";
 
 	@Override
 	public List<Map<String, Object>> getListUsersJoined() {
@@ -81,5 +82,20 @@ public class UserJoinInitiativeDAO implements UserJoinInitiativeInterface {
 					}					
 					
 				}, idInitiative, userEmail);
+	}
+
+	@Override
+	public long insert(UserJoinInitiative joinInitiative) {
+		return template.update(qryInsert,
+				joinInitiative.getIdInitiative(), joinInitiative.getUserEmail(), 
+				joinInitiative.getType(), joinInitiative.getDate());
+	}
+
+	@Override
+	public int updateSync(UserJoinInitiative joinInitiative) {
+		joinInitiative.setIs_sync(true);
+		return template.update(qryUpdateToSync,
+				joinInitiative.getType(), joinInitiative.isIs_sync(),
+				joinInitiative.getIdInitiative(), joinInitiative.getUserEmail());
 	}
 }

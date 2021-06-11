@@ -28,8 +28,8 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	}
 
 	@Override
-	public int delete(String userEmail, String userReviewEmail) {
-		return userReviewUserDAO.delete(userEmail, userReviewEmail);
+	public int delete(String userEmail, String userReviewEmail, String date) {
+		return userReviewUserDAO.delete(userEmail, userReviewEmail, date);
 	}
 
 	@Override
@@ -40,6 +40,11 @@ public class UserReviewUserService implements UserReviewUserInterface {
 	@Override
 	public List<Map<String, Object>> getListReviews() {
 		return userReviewUserDAO.getListReviews();
+	}
+
+	@Override
+	public int updateSync(UserReviewUser reviewUser) {
+		return userReviewUserDAO.updateSync(reviewUser);
 	}
 	
 }

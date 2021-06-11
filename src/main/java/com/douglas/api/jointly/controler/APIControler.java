@@ -542,11 +542,9 @@ public class APIControler {
 	}
 	
 	@RequestMapping(value = "/users/reviews", method = RequestMethod.POST)
-	public APIResponse insertReview(@RequestBody UserReviewUser reviewUser, String date, @RequestParam("userEmail") String userEmail, 
-									@RequestParam("userReviewEmail") String userReviewEmail, @RequestParam("review") Optional<String> review, 
-									@RequestParam("stars") int stars)
+	public APIResponse insertReview(@RequestBody UserReviewUser reviewUser)
 	{
-		logger.info(String.format("insert review on userReview by user [%s | %s | %s | %d]", userEmail, userReviewEmail, review, stars));
+		logger.info("insert review on userReview");
 		int result = 0;
 		UserReviewUser userReviewUser = new UserReviewUser(reviewUser.getUser(), reviewUser.getUserReview(), reviewUser.getDate(),
 													reviewUser.getReview(), reviewUser.getStars());
@@ -554,13 +552,13 @@ public class APIControler {
 		try {
 			result = reviewUserService.insert(userReviewUser);
 		} catch (Exception e) {
-			String message = String.format("ERR : %s - [userEmail=%s; userReviewEmail=%s]", e.getCause(), userEmail, userReviewEmail);
+			String message = String.format("ERR : %s ", e.getCause());
 			logger.error(message);
 			return new APIResponse(true, message, userReviewUser);
 		}
 		
 		if(result == 0)
-			return new APIResponse(true, String.format("ERR : Cannot insert review reviewUserService user [%s]", userReviewEmail), userReviewUser);
+			return new APIResponse(true, String.format("ERR : Cannot insert review reviewUserService user [%s]", userReviewUser.getUserReview()), userReviewUser);
 		else
 		{
 			try {
@@ -640,7 +638,7 @@ public class APIControler {
 						if(initiative.isIs_deleted()) {
 							initiativeService.delete(initiative.getId());	// lo elimina de la tabla
 						} else {
-							initiativeService.updateSync(tmp);	// lo actualiza
+							initiativeService.updateSync(initiative);	// lo actualiza
 						}
 					} else if (!initiative.isIs_deleted()) {			// si no existe en la tabla lo crea
 						initiative.setId(0);
@@ -668,12 +666,97 @@ public class APIControler {
 					UserFollowUser tmp = followUserService.getUserFollowUser(followUser.getUser(), followUser.getUser_follow());
 	
 					if(tmp == null) {	// si no existe en la tabla lo crea
-						long result = followUserService.insert(followUser.getUser(), followUser.getUser_follow());
-						logger.info(result);
+						if(!followUser.isIs_deleted()) {
+							long result = followUserService.insert(followUser.getUser(), followUser.getUser_follow());
+							logger.info(result);
+						}
 					} else if(followUser.isIs_deleted()) {	// lo elimina de la tabla
 						followUserService.delete(followUser.getUser(), followUser.getUser_follow());
 					}					
 				} 
+			}
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);	
+		}
+		
+		return new APIResponse(false, "OK", null);
+	}
+	
+	@RequestMapping(value = "/initiatives/userjoin/sync", method = RequestMethod.POST)
+	public APIResponse syncUserJoin(@RequestBody UserJoinInitiative... joinInitiatives) {
+		
+		logger.info("Sync data UserJoinInitiative");
+		
+		try {
+			for (UserJoinInitiative joinInitiative : joinInitiatives) {
+				if(!joinInitiative.isIs_sync()) {
+					
+					UserJoinInitiative tmp = joinInitiativeService.getUserJoinInitiative(joinInitiative.getIdInitiative(), joinInitiative.getUserEmail());
+	
+					if(tmp != null) {	// si existe en la tabla
+						if(joinInitiative.isIs_deleted()) {
+							joinInitiativeService.delete(joinInitiative.getIdInitiative(), joinInitiative.getUserEmail());	// lo elimina de la tabla
+						} else {
+							joinInitiativeService.updateSync(joinInitiative);	// lo actualiza
+						}
+					} else if (!joinInitiative.isIs_deleted()) {			// si no existe en la tabla lo crea
+						long result = joinInitiativeService.insert(joinInitiative);
+						logger.info(result);
+					}	
+				}
+			}
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);	
+		}
+		
+		return new APIResponse(false, "OK", null);
+	}
+	
+	@RequestMapping(value = "/users/userreview/sync", method = RequestMethod.POST)
+	public APIResponse syncUserReview(@RequestBody UserReviewUser... reviewUsers) {
+		
+		logger.info("Sync data UserReviews");
+		
+		try {
+			for (UserReviewUser reviewUser : reviewUsers) {
+				if(!reviewUser.isIs_sync()) {
+					
+					UserReviewUser tmp = reviewUserService.getReview(reviewUser.getUser(), reviewUser.getUserReview(), reviewUser.getDate());
+	
+					if(tmp != null) {	// si existe en la tabla
+						if(reviewUser.isIs_deleted()) {
+							reviewUserService.delete(reviewUser.getUser(), reviewUser.getUserReview(), reviewUser.getDate());	// lo elimina de la tabla
+						} else {
+							reviewUserService.updateSync(reviewUser);	// lo actualiza
+						}
+					} else if (!reviewUser.isIs_deleted()) {			// si no existe en la tabla lo crea
+						long result = reviewUserService.insert(reviewUser);
+						logger.info(result);
+					}	
+				}
+			}
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);	
+		}
+		
+		return new APIResponse(false, "OK", null);
+	}
+	
+	@RequestMapping(value = "/chat/sync", method = RequestMethod.POST)
+	public APIResponse syncChat(@RequestBody Chat... chats) {
+		
+		logger.info("Sync data Chat");
+		
+		try {
+			for (Chat chat : chats) {
+				if(!chat.isIs_sync()) {
+					
+					Chat tmp = chatService.getChatMessage(chat.getIdInitiative(), chat.getDate(), chat.getEmailUser());
+	
+					if(tmp == null) {
+						chatService.insert(chat);
+					}
+				}
 			}
 		} catch (Exception e) {
 			return new APIResponse(true, "ERR", null);	

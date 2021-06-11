@@ -49,5 +49,15 @@ public class UserJoinInitiativeService implements UserJoinInitiativeInterface {
 	@Override
 	public UserJoinInitiative getUserJoinInitiative(long idInitiative, String userEmail) {
 		return userJoinInitiativeDAO.getUserJoinInitiative(idInitiative, userEmail);
+	}
+
+	@Override
+	public long insert(UserJoinInitiative joinInitiative) {
+		return userJoinInitiativeDAO.insert(joinInitiative);
+	}
+
+	@Override
+	public int updateSync(UserJoinInitiative joinInitiative) {
+		return userJoinInitiativeDAO.updateSync(joinInitiative);
 	}	
 }
