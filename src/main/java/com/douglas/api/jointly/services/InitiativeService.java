@@ -37,7 +37,7 @@ public class InitiativeService implements InitiativeInterface {
 	}
 
 	@Override
-	public int update(String name, String targetDate, String description, String targetArea, String location, byte[] imagen, int targetAmount, String status, long id) {
+	public int update(String name, String targetDate, String description, String targetArea, String location, String imagen, int targetAmount, String status, long id) {
 		return initiativeDAO.update(name, targetDate, description, targetArea, location, imagen, targetAmount, status, id);
 	}
 

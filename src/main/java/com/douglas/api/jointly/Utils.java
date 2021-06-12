@@ -16,6 +16,9 @@ public class Utils {
 	public final static DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss");
 	public final static DateTimeFormatter FORMAT2 = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 	
+
+	public static final String PATH_IMAGES = "src//main//resources//static/images";
+	
 	/**
 	 * Execute any insert query and return the auto generated key
 	 * @param template
@@ -39,4 +42,5 @@ public class Utils {
 	public static String getFormatStringDate(String date) {
 		return date.replace('-', '/');
 	}
+
 }

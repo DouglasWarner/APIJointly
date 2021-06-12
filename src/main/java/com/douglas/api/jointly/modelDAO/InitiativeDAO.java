@@ -42,7 +42,7 @@ public class InitiativeDAO implements InitiativeInterface {
 		list[3]= Types.VARCHAR;
 		list[4]= Types.VARCHAR;
 		list[5]= Types.VARCHAR;
-		list[6]= Types.BLOB;
+		list[6]= Types.VARCHAR;
 		list[7]= Types.INTEGER;
 		list[8]= Types.VARCHAR;
 		list[9]= Types.VARCHAR;
@@ -101,7 +101,7 @@ public class InitiativeDAO implements InitiativeInterface {
 	@Override
 	public int update(String name, String targetDate,
 							String description, String targetArea,
-							String location, byte[] imagen,
+							String location, String imagen,
 							int targetAmount, String status, long id) {
 		return template.update(qryUpdateInitiative,
 				name, targetDate, description, location, imagen, targetAmount, status, id);

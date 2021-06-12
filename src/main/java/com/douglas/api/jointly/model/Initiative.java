@@ -26,7 +26,7 @@ public class Initiative {
 	@JsonProperty("location")
     private String location;
 	@JsonProperty("imagen")
-    private byte[] imagen;
+    private String imagen;
 	@JsonProperty("target_amount")
     private int targetAmount;
 	@JsonProperty("status")
@@ -43,8 +43,23 @@ public class Initiative {
     public Initiative() {
 	}
         
-    public Initiative(String name, String createdAt, String targetDate, String description,
-    		String targetArea, String location, byte[] imagen, int targetAmount, String status, String createdBy,
+    public Initiative(String name, String createdAt, String targetDate, String description, String targetArea,
+			String location, int targetAmount, String status, String createdBy, String refCode) {
+		super();
+		this.name = name;
+		this.createdAt = createdAt;
+		this.targetDate = targetDate;
+		this.description = description;
+		this.targetArea = targetArea;
+		this.location = location;
+		this.targetAmount = targetAmount;
+		this.status = status;
+		this.createdBy = createdBy;
+		this.refCode = refCode;
+	}
+
+	public Initiative(String name, String createdAt, String targetDate, String description,
+    		String targetArea, String location, String imagen, int targetAmount, String status, String createdBy,
     		String refCode) {
 		super();
 		this.name = name;
@@ -61,7 +76,7 @@ public class Initiative {
 	}
 
 	public Initiative(long id, String name, String createdAt, String targetDate, String description, String targetArea,
-			String location, byte[] imagen, int targetAmount, String status, String createdBy, String refCode) {
+			String location, String imagen, int targetAmount, String status, String createdBy, String refCode) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -75,6 +90,18 @@ public class Initiative {
 		this.status = status;
 		this.createdBy = createdBy;
 		this.refCode = refCode;
+	}
+
+	public Initiative(long id, String name, String targetDate, String description, String targetArea, String location,
+			int targetAmount) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.targetDate = targetDate;
+		this.description = description;
+		this.targetArea = targetArea;
+		this.location = location;
+		this.targetAmount = targetAmount;
 	}
 
 	public long getId() {
@@ -133,11 +160,11 @@ public class Initiative {
 		this.location = location;
 	}
 
-	public byte[] getImagen() {
+	public String getImagen() {
 		return imagen;
 	}
 
-	public void setImagen(byte[] imagen) {
+	public void setImagen(String imagen) {
 		this.imagen = imagen;
 	}
 

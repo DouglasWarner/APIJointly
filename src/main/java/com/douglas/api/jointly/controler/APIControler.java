@@ -1,10 +1,17 @@
 package com.douglas.api.jointly.controler;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.servlet.annotation.MultipartConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.douglas.api.jointly.Utils;
 import com.douglas.api.jointly.model.Chat;
@@ -110,13 +118,30 @@ public class APIControler {
 	@RequestMapping(value = "/initiatives/initiative", method = RequestMethod.POST)
 	public APIResponse insertInitiative(@RequestParam("name") String name, @RequestParam("created_at") String createdAt, @RequestParam("target_date") String targetDate,
 									@RequestParam("description") Optional<String> description, @RequestParam("target_area") String targetArea,
-									@RequestParam("location") String location, @RequestParam("imagen") Optional<byte[]> imagen,
-									@RequestParam("target_amount") int targetAmount, @RequestParam("created_by") String createdBy, @RequestParam("ref_code") String ref_code)
+									@RequestParam("location") String location, @RequestParam("target_amount") int targetAmount,
+									@RequestParam("created_by") String createdBy, @RequestParam("ref_code") String ref_code, Optional<MultipartFile> imagen)
 	{
 		logger.info(String.format("insert initiative [%s]", name));
+		
 		Initiative initiative = new Initiative(name, createdAt, targetDate, description.orElse(""), 
-											targetArea, location, imagen.orElse(null), 
-											targetAmount, "A", createdBy, ref_code);
+				targetArea, location, targetAmount, "A", createdBy, ref_code);
+		
+		if(imagen.isPresent()) {
+			Path file = Paths.get(Utils.PATH_IMAGES);
+			String rutaAbsoluta = file.toFile().getAbsolutePath();
+			
+			byte[] bs;
+			try {
+				bs = imagen.get().getBytes();
+				Path rutaCompleta = Paths.get(rutaAbsoluta +"//"+ imagen.get().getOriginalFilename());
+				Files.write(rutaCompleta, bs);
+				initiative.setImagen(imagen.get().getOriginalFilename());
+			} catch (IOException e) {
+				e.printStackTrace();
+				initiative.setImagen("");
+			}
+		}
+		
 		long result = 0;
 		
 		try {
@@ -140,16 +165,34 @@ public class APIControler {
 	@RequestMapping(value = "/initiatives/initiative", method = RequestMethod.PUT)
 	public APIResponse updateInitiative(@RequestParam("name") String name, @RequestParam("targetDate") String targetDate,
 									@RequestParam("description") Optional<String> description, @RequestParam("targetArea") String targetArea,
-									@RequestParam("location") String location, @RequestParam("imagen") Optional<byte[]> imagen,
+									@RequestParam("location") String location, @RequestParam("imagen") Optional<MultipartFile> imagen,
 									@RequestParam("targetAmount") int targetAmount, @RequestParam("id") long id)
 	{
 		logger.info(String.format("update initiative [%d]", id));
 		int result = 0;
 		
+		Initiative initiative = new Initiative(id, name, targetDate, description.orElse(""), 
+				targetArea, location, targetAmount);
+		
+		if(!imagen.isEmpty()) {
+			Path file = Paths.get(Utils.PATH_IMAGES);
+			String rutaAbsoluta = file.toFile().getAbsolutePath();
+			
+			byte[] bs;
+			try {
+				bs = imagen.get().getBytes();
+				Path rutaCompleta = Paths.get(rutaAbsoluta +"//"+ imagen.get().getOriginalFilename());
+				Files.write(rutaCompleta, bs);
+				initiative.setImagen(imagen.get().getOriginalFilename());
+			} catch (IOException e) {
+				initiative.setImagen("");
+			}
+		}
+		
 		try {
-			result = initiativeService.update(name, targetDate, description.orElse(""), 
-								targetArea, location, imagen.orElse(null), 
-								targetAmount, "A", id);
+			result = initiativeService.update(initiative.getName(), initiative.getTargetDate(), initiative.getDescription(), 
+											initiative.getTargetArea(), initiative.getLocation(), initiative.getImagen(), 
+											initiative.getTargetAmount(), "A", initiative.getId());
 		} catch (Exception e) {
 			String message = String.format("ERR : %d - [id=%d]", e.getCause(), id);
 			logger.error(message);
@@ -169,6 +212,8 @@ public class APIControler {
 		logger.info(String.format("delete initiative [%d]", id));
 		int result = 0;
 		
+		Initiative imagen = initiativeService.getInitiativeById(id);
+		
 		try {
 			result = initiativeService.delete(id);
 		} catch (Exception e) {
@@ -179,8 +224,17 @@ public class APIControler {
 		
 		if(result == 0)
 			return new APIResponse(true, String.format("ERR : Cannot delete or not found initiative id [%d]", id), null);
-		else
-			return new APIResponse(false, "OK", null); 
+		else {
+			Path file = Paths.get(Utils.PATH_IMAGES);
+			String rutaAbsoluta = file.toFile().getAbsolutePath();
+			Path rutaCompleta = Paths.get(rutaAbsoluta +"//"+ imagen.getImagen());
+			try {
+				Files.delete(rutaCompleta);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return new APIResponse(false, "OK", null);
+		}
 	}
 	
 	@RequestMapping(value = "/initiatives/usersJoined", method = RequestMethod.GET)
@@ -336,17 +390,17 @@ public class APIControler {
 	@RequestMapping(value = "/users/user", method = RequestMethod.POST)
 	public APIResponse insertUser(@RequestParam("email") String email, @RequestParam("password") String password,
 						@RequestParam("name") String name, @RequestParam("phone") Optional<String> phone,
-						@RequestParam("imagen") Optional<byte[]> imagen, @RequestParam("location") Optional<String> location,
+						@RequestParam("imagen") Optional<MultipartFile> imagen, @RequestParam("location") Optional<String> location,
 						@RequestParam("description") Optional<String> description, @RequestParam("created_at") String created_at)
 	{
 		logger.info(String.format("insert user %s", email));
 		int result = 0;
-		User user = new User(email, password, name, phone.orElse(""), imagen.orElse(null), location.orElse(""), description.orElse(""), created_at);
+		User user = new User(email, password, name, phone.orElse(""), null, location.orElse(""), description.orElse(""), created_at);
 		String messageErrorDuplicateEntry = String.format("ERR : User already exists");
 		
 		try {
 			result = userService.insert(email, password, name, 
-								phone.orElse(""), imagen.orElse(null), location.orElse(""),
+								phone.orElse(""), null, location.orElse(""),
 								description.orElse(""), created_at);
 			user.setId(result);
 		} catch (DuplicateKeyException e) {
@@ -367,7 +421,7 @@ public class APIControler {
 	@RequestMapping(value = "/users/user", method = RequestMethod.PUT)
 	public APIResponse updateUser(@RequestParam("email") String email, @RequestParam("password") String password,
 						@RequestParam("name") String name, @RequestParam("phone") Optional<String> phone,
-						@RequestParam("imagen") Optional<byte[]> imagen, @RequestParam("location") Optional<String> location,
+						@RequestParam("imagen") Optional<MultipartFile> imagen, @RequestParam("location") Optional<String> location,
 						@RequestParam("description") Optional<String> description, @RequestParam("id") int id)
 	{
 		logger.info(String.format("update user %s", email));
@@ -376,7 +430,7 @@ public class APIControler {
 		
 		try {
 			result = userService.update(email, password, name,
-								phone.orElse(""), imagen.orElse(null), location.orElse(""),
+								phone.orElse(""), null, location.orElse(""),
 								description.orElse(""), id);
 		} catch (DuplicateKeyException e) {
 			String messageErrorDuplicateEntry = String.format("ERR : User already exists - [userEmail=%s]", email);
@@ -559,13 +613,10 @@ public class APIControler {
 		
 		if(result == 0)
 			return new APIResponse(true, String.format("ERR : Cannot insert review reviewUserService user [%s]", userReviewUser.getUserReview()), userReviewUser);
-		else
-		{
-			try {
-				return new APIResponse(false, "OK", reviewUserService.getReview(userReviewUser.getUser(), userReviewUser.getUserReview(), userReviewUser.getDate()));
-			} catch (Exception e) {
-				return new APIResponse(true, "ERR : " + e.getCause(), null);
-			}
+		else {
+			userReviewUser.setIs_deleted(false);
+			userReviewUser.setIs_sync(true);
+			return new APIResponse(false, "OK", userReviewUser);
 		}
 	}
 	
@@ -763,5 +814,10 @@ public class APIControler {
 		}
 		
 		return new APIResponse(false, "OK", null);
+	}
+	
+	@RequestMapping(value = "/qr", method = RequestMethod.GET)
+	public String getQR() {
+		return "mi direccion para descargar qr";
 	}
 }
