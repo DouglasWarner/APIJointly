@@ -49,5 +49,10 @@ public class UserService implements UserInterface {
 	public List<Map<String, Object>> getListInitiativeCreatedByUser(String email) {
 		List<Map<String, Object>> list = userDao.getListInitiativeCreatedByUser(email);
 		return list;
+	}
+
+	@Override
+	public int updateToSync(User user) {
+		return userDao.updateToSync(user);
 	} 
 }

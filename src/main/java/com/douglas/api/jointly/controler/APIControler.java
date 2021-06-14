@@ -405,7 +405,7 @@ public class APIControler {
 			user.setId(result);
 		} catch (DuplicateKeyException e) {
 			logger.info(messageErrorDuplicateEntry);
-			return new APIResponse(true, messageErrorDuplicateEntry, null);
+			return new APIResponse(true, messageErrorDuplicateEntry, userService.getUser(email));
 		} catch (Exception e) {
 			String message = String.format("ERR : %s - [userEmail=%s]", e.getCause(), email);
 			logger.error(message);
@@ -672,6 +672,34 @@ public class APIControler {
 		} catch (Exception e) {
 			return new APIResponse(true, "ERR", null);
 		}
+	}
+	
+	@RequestMapping(value = "/users/user/sync", method = RequestMethod.POST)
+	public APIResponse syncUser(@RequestBody User... users) {
+		logger.info("Sync data users");
+		
+		try {
+			for (User user : users) {
+				if(!user.isIs_sync()) {
+					
+					User tmp = userService.getUser(user.getEmail());
+	
+					if(tmp != null) {	// si existe en la tabla
+						userService.updateToSync(user);	// lo actualiza
+					} else {
+						user.setId(0);
+						long result = userService.insert(user.getEmail(),user.getPassword(), user.getName(), user.getPhone(), user.getImagen(), user.getLocation(),
+								user.getDescription(), user.getCreatedAt());
+						logger.info(result);
+					}	
+				}
+			}
+		} catch (Exception e) {
+			return new APIResponse(true, "ERR", null);	
+		}
+		
+		return new APIResponse(false, "OK", null);
+		
 	}
 	
 	@RequestMapping(value = "/initiatives/initiative/sync", method = RequestMethod.POST)

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.douglas</groupId>
 	<artifactId>api.jointly</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>api.jointly</name>
 	<description>Api for JointlyApp</description>
 	<properties>

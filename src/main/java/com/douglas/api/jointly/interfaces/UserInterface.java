@@ -14,6 +14,7 @@ public interface UserInterface {
 	public int update(String email, String password, String name, 
 			String phone, byte[] imagen, String location, 
 			String description, int id);
+	public int updateToSync(User user);
 	public int delete(int idUser);
 	public List<Map<String, Object>> getListInitiativeCreatedByUser(String email);
 }

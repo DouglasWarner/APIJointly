@@ -22,9 +22,10 @@ public class UserDAO implements UserInterface {
 	private String qryGetUser = "SELECT * FROM user WHERE email=?";
 	private String qryInsert = "INSERT INTO user (email, password, name, phone, imagen, location, description, created_at) "
 												+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	private String qryUpdate = "UPDATE user SET email=?, password=?, name=?, phone=?, imagen=?, location=?, description=? WHERE id=?";
+	private String qryUpdate = "UPDATE user SET password=?, name=?, phone=?, imagen=?, location=?, description=? WHERE id=?";
 	private String qryDelete = "DELETE FROM user WHERE id=?";
 	private String qryGetListInitiativeCreatedByUser = "SELECT * FROM initiative WHERE created_by=?";
+	private String qryUpdateToSync = "UPDATE user SET name=?, phone=?, imagen=?, location=?, description=?, is_sync=? WHERE id=?";
 	
 	@Override
 	public List<Map<String, Object>> getList() {
@@ -63,6 +64,12 @@ public class UserDAO implements UserInterface {
 	public List<Map<String, Object>> getListInitiativeCreatedByUser(String email) {
 		List<Map<String, Object>> lista = template.queryForList(qryGetListInitiativeCreatedByUser, email);
 		return lista;
+	}
+
+	@Override
+	public int updateToSync(User user) {
+		return template.update(qryUpdate, 
+				user.getName(), user.getPhone(), user.getImagen(), user.getLocation(), user.getDescription(), true, user.getId());
 	}
 
 }
